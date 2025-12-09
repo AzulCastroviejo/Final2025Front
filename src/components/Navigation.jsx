@@ -4,15 +4,15 @@ import { Menu, X, ShoppingCart, User, Search, LogOut } from 'lucide-react';
 
 export default function Navigation({ cartCount = 0 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('user') || 'null');
-  const isLoggedIn = !!user;
+  //const navigate = useNavigate();
+ // const user = JSON.parse(localStorage.getItem('user') || 'null');
+//  const isLoggedIn = !!user;
 
-  const handleLogout = () => {
+ /* const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     navigate('/');
-  };
+  };*/
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800">
@@ -52,35 +52,18 @@ export default function Navigation({ cartCount = 0 }) {
               <Search className="w-5 h-5" />
             </button>
             
-            {isLoggedIn ? (
-              <>
+            
                 <Link 
-                  to="/cart"
-                  className="p-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all relative"
-                >
-                  <ShoppingCart className="w-5 h-5" />
-                  {cartCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-indigo-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                      {cartCount}
-                    </span>
-                  )}
-                </Link>
-                <button 
-                  onClick={handleLogout}
-                  className="p-2 text-gray-300 hover:text-red-400 hover:bg-gray-800 rounded-lg transition-all"
-                  title="Cerrar sesión"
-                >
-                  <LogOut className="w-5 h-5" />
-                </button>
-              </>
-            ) : (
-              <Link 
-                to="/"
-                className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white rounded-lg transition-all"
-              >
-                Login
-              </Link>
-            )}
+              to="/cart"
+              className="p-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all relative"
+            >
+              <ShoppingCart className="w-5 h-5" />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-indigo-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
           </div>
 
           {/* Mobile menu button */}
