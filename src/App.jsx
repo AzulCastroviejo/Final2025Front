@@ -21,6 +21,15 @@ function ProtectedRoute({ children }) {
 }
 
 function App() {
+ useEffect(() => {
+    localStorage.setItem('user', JSON.stringify({
+      id: 1,
+      email: 'demo@test.com',
+      firstname: 'Demo',
+      lastname: 'User'
+    }));
+  }, []);
+  
   return (
     <Routes>
       {/* Public Routes */}
