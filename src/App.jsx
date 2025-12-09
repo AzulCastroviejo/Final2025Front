@@ -25,45 +25,16 @@ function App() {
   
   return (
     <Routes>
-      {/* Public Routes */}
-      <Route path="/" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      {/* Ruta principal - Mostrar productos directamente (HOME) */}
+      <Route path="/" element={<Products />} />
       
-      {/* Protected Routes */}
-      <Route 
-        path="/products" 
-        element={
-          <ProtectedRoute>
-            <Products />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/products/:id" 
-        element={
-          <ProtectedRoute>
-            <ProductDetail />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/cart" 
-        element={
-          <ProtectedRoute>
-            <Cart />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/dashboard" 
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        } 
-      />
+      {/* Detalle de producto */}
+      <Route path="/products/:id" element={<ProductDetail />} />
       
-      {/* Catch all - redirect to login */}
+      {/* Carrito de compras */}
+      <Route path="/cart" element={<Cart />} />
+      
+      {/* Redireccionar cualquier ruta no encontrada al home */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
