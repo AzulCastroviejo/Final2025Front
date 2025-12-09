@@ -17,11 +17,19 @@ export default function Login() {
 
     try {
       // AJUSTA ESTA RUTA según tu API
-      const res = await api.post('/auth/login', { email, password });
-      
+      const res = await api.get('/clients/login', {
+        params: {
+        email,
+        password
+        }
+      });
+
+    if (!res.data) {
+        throw new Error("Usuario o contraseña incorrectos");
+    }
       // Guarda el token y usuario
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
+     localStorage.setItem('user', JSON.stringify(res.data));
+
       
       // Redirige a productos
       navigate('/products');
