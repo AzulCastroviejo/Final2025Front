@@ -83,30 +83,7 @@ export default function Navigation({ cartCount = 0 }) {
             <button className="block w-full text-left px-4 py-2 text-gray-300 hover:bg-gray-800 rounded-lg">
               Categories
             </button>
-            {isLoggedIn && (
-              <>
-                <Link 
-                  to="/dashboard"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block w-full text-left px-4 py-2 text-gray-300 hover:bg-gray-800 rounded-lg"
-                >
-                  Dashboard
-                </Link>
-                <Link 
-                  to="/cart"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block w-full text-left px-4 py-2 text-gray-300 hover:bg-gray-800 rounded-lg"
-                >
-                  Cart ({cartCount})
-                </Link>
-                <button 
-                  onClick={() => { handleLogout(); setIsMenuOpen(false); }}
-                  className="block w-full text-left px-4 py-2 text-red-400 hover:bg-gray-800 rounded-lg"
-                >
-                  Logout
-                </button>
-              </>
-            )}
+           
           </div>
         </div>
       )}
