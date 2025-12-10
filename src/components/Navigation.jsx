@@ -36,14 +36,7 @@ export default function Navigation({ cartCount = 0 }) {
             <button className="text-gray-300 hover:text-white transition-colors">
               Categories
             </button>
-            {isLoggedIn && (
-              <Link 
-                to="/dashboard"
-                className="text-gray-300 hover:text-white transition-colors"
-              >
-                Dashboard
-              </Link>
-            )}
+           
           </div>
 
           {/* Icons */}
@@ -81,7 +74,7 @@ export default function Navigation({ cartCount = 0 }) {
         <div className="md:hidden bg-gray-900 border-t border-gray-800 animate-fade-in">
           <div className="px-4 py-4 space-y-3">
             <Link 
-              to="/products"
+              to="/"
               onClick={() => setIsMenuOpen(false)}
               className="block w-full text-left px-4 py-2 text-gray-300 hover:bg-gray-800 rounded-lg"
             >
