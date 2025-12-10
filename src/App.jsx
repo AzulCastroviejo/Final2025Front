@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 // Pages
+import Home from "./pages/Home";
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Products from './pages/Products';
@@ -26,7 +27,8 @@ function App() {
   return (
     <Routes>
       {/* Ruta principal - Mostrar productos directamente (HOME) */}
-      <Route path="/" element={<Products />} />
+      <Route path="/" element={<Home />} />  
+      <Route path="/productos" element={<Products />} />
       
       {/* Detalle de producto */}
       <Route path="/products/:id" element={<ProductDetail />} />
@@ -34,6 +36,9 @@ function App() {
       {/* Carrito de compras */}
       <Route path="/cart" element={<Cart />} />
       
+      {/* Categorias */}
+      <Route path="/categorias" element={<Categorias />} />
+
       {/* Redireccionar cualquier ruta no encontrada al home */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
