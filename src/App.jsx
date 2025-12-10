@@ -10,7 +10,7 @@ import Cart from './pages/Cart';
 import Dashboard from './pages/Dashboard';
 
 // Protected Route Component
-function ProtectedRoute({ children }) {
+/*function ProtectedRoute({ children }) {
   const token = localStorage.getItem('token');
   
   if (!token) {
@@ -18,7 +18,7 @@ function ProtectedRoute({ children }) {
   }
   
   return children;
-}
+}*/
 
 function App() {
 
