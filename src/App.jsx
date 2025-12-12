@@ -25,9 +25,15 @@ function App() {
   
   return (
     <Routes>
-      {/* Ruta principal - Mostrar productos directamente (HOME) */}
-      <Route path="/" element={<Products />} />
+       {/* Ruta principal - Home con categorías y productos destacados */}
+      <Route path="/" element={<Home />} />
       
+      {/* Todos los productos */}
+      <Route path="/products" element={<Products />} />
+      
+      {/* Vista de productos por categoría */}
+      <Route path="/categories/:categoryId" element={<CategoryPage />} />
+     
       {/* Detalle de producto */}
       <Route path="/products/:id" element={<ProductDetail />} />
       

@@ -41,19 +41,21 @@ export default function Navigation({ cartCount = 0 }) {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
+             <Link 
+              to="/"
+              className="text-gray-300 hover:text-white transition-colors"
+            >
+              Inicio
+            </Link>
             <Link 
               to="/products"
               className="text-gray-300 hover:text-white transition-colors"
             >
               Products
             </Link>
-            <button className="text-gray-300 hover:text-white transition-colors">
-              Categories
-            </button>
-           
-        
+            
 
- {/* Categories Dropdown */}
+            {/* Categories Dropdown */}
             <div className="relative">
               <button 
                 onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
