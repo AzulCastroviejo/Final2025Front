@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Search, ShoppingCart } from 'lucide-react';
 import api from '../api';
 import Navigation from '../components/Navigation';
