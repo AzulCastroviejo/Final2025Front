@@ -4,7 +4,9 @@ import { Menu, X, ShoppingCart, User, Search, LogOut } from 'lucide-react';
 
 export default function Navigation({ cartCount = 0 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  //const navigate = useNavigate();
+  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const navigate = useNavigate();
  // const user = JSON.parse(localStorage.getItem('user') || 'null');
 //  const isLoggedIn = !!user;
 
@@ -14,6 +16,18 @@ export default function Navigation({ cartCount = 0 }) {
     navigate('/');
   };*/
 
+    useEffect(() => {
+      loadCategories();
+    }, []);
+
+    async function loadCategories() {
+      try {
+        const res = await api.get('/categories');
+        setCategories(res.data);
+      } catch (err) {
+        console.error('Error loading categories:', err);
+      }
+  }
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -37,6 +51,45 @@ export default function Navigation({ cartCount = 0 }) {
               Categories
             </button>
            
+        
+
+ {/* Categories Dropdown */}
+            <div className="relative">
+              <button 
+                onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
+                onMouseEnter={() => setIsCategoriesOpen(true)}
+                className="flex items-center gap-1 text-gray-300 hover:text-white transition-colors"
+              >
+                Categorías
+                <ChevronDown className={`w-4 h-4 transition-transform ${isCategoriesOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {isCategoriesOpen && (
+                <div 
+                  className="absolute top-full left-0 mt-2 w-56 bg-gray-900 border border-gray-700 rounded-lg shadow-xl animate-fade-in"
+                  onMouseLeave={() => setIsCategoriesOpen(false)}
+                >
+                  <div className="py-2">
+                    {categories.length > 0 ? (
+                      categories.map(cat => (
+                        <Link
+                          key={cat.id_key}
+                          to={`/categories/${cat.id_key}`}
+                          onClick={() => setIsCategoriesOpen(false)}
+                          className="block px-4 py-2 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+                        >
+                          {cat.name}
+                        </Link>
+                      ))
+                    ) : (
+                      <div className="px-4 py-2 text-gray-500 text-sm">
+                        No hay categorías disponibles
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Icons */}
@@ -44,7 +97,6 @@ export default function Navigation({ cartCount = 0 }) {
             <button className="p-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all">
               <Search className="w-5 h-5" />
             </button>
-            
             
             <Link 
               to="/cart"
@@ -78,12 +130,37 @@ export default function Navigation({ cartCount = 0 }) {
               onClick={() => setIsMenuOpen(false)}
               className="block w-full text-left px-4 py-2 text-gray-300 hover:bg-gray-800 rounded-lg"
             >
-              Products
+              Productos
             </Link>
-            <button className="block w-full text-left px-4 py-2 text-gray-300 hover:bg-gray-800 rounded-lg">
-              Categories
-            </button>
-           
+            
+            <div className="border-t border-gray-700 pt-3">
+              <div className="px-4 py-2 text-gray-400 text-sm font-semibold">
+                Categorías
+              </div>
+              {categories.map(cat => (
+                <Link
+                  key={cat.id_key}
+                  to={`/categories/${cat.id_key}`}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="block w-full text-left px-4 py-2 text-gray-300 hover:bg-gray-800 rounded-lg"
+                >
+                  {cat.name}
+                </Link>
+              ))}
+            </div>
+
+            <Link 
+              to="/cart"
+              onClick={() => setIsMenuOpen(false)}
+              className="block w-full text-left px-4 py-2 text-gray-300 hover:bg-gray-800 rounded-lg flex items-center justify-between"
+            >
+              <span>Carrito</span>
+              {cartCount > 0 && (
+                <span className="bg-indigo-500 text-white px-2 py-1 rounded-full text-xs">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
           </div>
         </div>
       )}

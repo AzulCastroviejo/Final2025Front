@@ -35,7 +35,11 @@ function App() {
       <Route path="/cart" element={<Cart />} />
       
       {/* Redireccionar cualquier ruta no encontrada al home */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {<Route path="*" element={<Navigate to="/" replace />} />}
+
+      {/* Redireccionar dashboard */}
+      <Route path="/dashboard" element={<Dashboard />} />
+
     </Routes>
   );
 }

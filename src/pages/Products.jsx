@@ -5,6 +5,9 @@ import Navigation from '../components/Navigation';
 
 // Componente de tarjeta de producto
 function ProductCard({ product, onAddToCart, onViewDetails }) {
+   const navigate = useNavigate();
+  
+  
   return (
     <div className="group bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl overflow-hidden border border-gray-700 hover:border-indigo-500/50 transition-all duration-300 animate-fade-in">
       <div className="relative overflow-hidden">
@@ -16,13 +19,27 @@ function ProductCard({ product, onAddToCart, onViewDetails }) {
         <div className="absolute top-3 right-3 bg-indigo-500 text-white px-3 py-1 rounded-full text-sm font-medium">
           ${product.price}
         </div>
+        {product.stock === 0 && (
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+            <span className="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold">
+              Agotado
+            </span>
+          </div>
+        )}
       </div>
       
       <div className="p-5">
-        <div className="text-xs text-gray-400 mb-2">
+        
+        <div 
+          onClick={() => product.category?.id_key && navigate(`/categories/${product.category.id_key}`)}
+          className="text-xs text-indigo-400 mb-2 hover:text-indigo-300 cursor-pointer inline-block"
+        >
           {product.category?.name || 'Sin categoría'}
         </div>
-        <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-indigo-400 transition-colors">
+         <h3 
+          onClick={() => navigate(`/products/${product.id_key}`)}
+          className="text-lg font-semibold text-white mb-2 group-hover:text-indigo-400 transition-colors cursor-pointer"
+        >
           {product.name}
         </h3>
         <div className="flex items-center justify-between text-sm text-gray-400 mb-4">
@@ -30,8 +47,8 @@ function ProductCard({ product, onAddToCart, onViewDetails }) {
         </div>
         
         <div className="flex gap-2">
-          <button 
-            onClick={() => onViewDetails(product)}
+           <button 
+            onClick={() => navigate(`/products/${product.id_key}`)}
             className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
           >
             Ver
@@ -69,16 +86,14 @@ export default function Products() {
     
     try {
       // Cargar productos
-      const productsRes = await api.get('/products');
+      const [productsRes, categoriesRes] = await Promise.all([
+        api.get('/products'),
+        api.get('/categories')
+      ]);
+      
       setProducts(productsRes.data);
-
-      // Cargar categorías
-      try {
-        const categoriesRes = await api.get('/categories');
-        setCategories(categoriesRes.data);
-      } catch (err) {
-        console.log('No se pudieron cargar categorías');
-      }
+      setCategories(categoriesRes.data);
+     
     } catch (err) {
       setError('No se pudieron cargar los productos. Por favor intenta de nuevo.');
       console.error('Error cargando datos:', err);
@@ -104,6 +119,9 @@ export default function Products() {
     alert(`${product.name} agregado al carrito`);
   }
 
+   function getProductCountByCategory(categoryId) {
+    return products.filter(p => p.category?.id_key === categoryId).length;
+  }
   // Filtrar productos
   const filteredProducts = products.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -137,6 +155,7 @@ export default function Products() {
               {error}
             </div>
           )}
+          
 
           {/* Filters */}
           <div className="mb-8 space-y-4">
