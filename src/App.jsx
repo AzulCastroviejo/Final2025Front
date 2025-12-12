@@ -8,6 +8,8 @@ import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import Dashboard from './pages/Dashboard';
+import Home from './pages/Home';
+import CategoryPage from './pages/CategoryPage';
 
 // Protected Route Component
 /*function ProtectedRoute({ children }) {
