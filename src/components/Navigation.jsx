@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, ShoppingCart, User, Search, LogOut } from 'lucide-react';
-
+import { Menu, X, ShoppingCart, Search, ChevronDown } from 'lucide-react';
+import api from '../api';
 export default function Navigation({ cartCount = 0 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
