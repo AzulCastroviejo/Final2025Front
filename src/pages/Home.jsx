@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {ShoppingCart, ChevronRight, ShoppingCart, Tag, Sparkles } from "lucide-react";
+import {ShoppingCart, ChevronRight, Tag, Sparkles } from "lucide-react";
 import api from "../api";
 import Navigation from "../components/Navigation";
 
