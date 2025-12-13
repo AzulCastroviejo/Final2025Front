@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Search, ShoppingCart } from 'lucide-react';
 import api from '../api';
 import Navigation from '../components/Navigation';
+import { useNavigate } from "react-router-dom";
 
 // Componente de tarjeta de producto
 function ProductCard({ product, onAddToCart, onViewDetails }) {
