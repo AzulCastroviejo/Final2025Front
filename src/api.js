@@ -1,14 +1,16 @@
 import axios from 'axios'
 
 // IMPORTANTE: Cambia esta URL a tu backend real
-const URL_BASE = import.meta.env.VITE_API_URL
+const URL_BASE = import.meta.env.VITE_API_URL  || 'https://final2025python-main.onrender.com/api';
+
+console.log('🔗 API URL:', URL_BASE); // Para debug
 
 const api = axios.create({
   baseURL: URL_BASE,
   headers: { 
     'Content-Type': 'application/json'
   },
-  timeout: 10000, // 10 segundos
+  timeout: 30000, // 10 segundos
 })
 
 // Interceptor para agregar token a todas las peticiones

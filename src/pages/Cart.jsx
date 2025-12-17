@@ -60,7 +60,13 @@ export default function Cart() {
   const tax = subtotal * 0.16; // 16% IVA
   const shipping = subtotal > 1000 ? 0 : 150;
   const total = subtotal + tax;
-
+  const PAYMENT_METHOD_MAP = {
+      'card': 'card',
+      'transfer': 'bank_transfer',
+      'cash': 'cash',
+      'debit': 'debit',
+      'credit': 'credit'
+    };
   // Finalizar compra
   async function handleCreateOrder(e) {
     e.preventDefault();
