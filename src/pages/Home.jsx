@@ -129,8 +129,8 @@ export default function Home() {
     try {
       // Cargar categorías y productos en paralelo
       const [categoriesRes, productsRes] = await Promise.all([
-        api.get("/categories"),
-        api.get("/products")
+        api.get("/categories/"),
+        api.get("/products/")
       ]);
       
       setCategories(categoriesRes.data);
@@ -191,7 +191,7 @@ export default function Home() {
               Descubre los mejores productos tech con las mejores ofertas del mercado
             </p>
             <button
-              onClick={() => navigate('/products')}
+              onClick={() => navigate('/products/')}
               className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white rounded-xl font-semibold text-lg transition-all shadow-lg shadow-indigo-500/25 animate-fade-in"
             >
               Ver Todos los Productos
@@ -233,7 +233,7 @@ export default function Home() {
                   </p>
                 </div>
                 <button
-                  onClick={() => navigate('/products')}
+                  onClick={() => navigate('/products/')}
                   className="hidden md:flex items-center gap-2 px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors"
                 >
                   Ver Todas
@@ -266,7 +266,7 @@ export default function Home() {
                   </p>
                 </div>
                 <button
-                  onClick={() => navigate('/products')}
+                  onClick={() => navigate('/products/')}
                   className="hidden md:flex items-center gap-2 px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors"
                 >
                   Ver Todos
