@@ -1,12 +1,7 @@
 import axios from 'axios'
 
 // IMPORTANTE: Cambia esta URL a tu backend real
-const URL_BASE = import.meta.env.VITE_API_URL  || 'https://final2025python-main.onrender.com/api';
-
-// ✅ Agregar /api si no lo tiene
-if (!URL_BASE.endsWith('/api')) {
-  URL_BASE = `${URL_BASE}/api`;
-}
+const URL_BASE = import.meta.env.VITE_API_URL  || 'https://final2025python-main.onrender.com';
 
 console.log('🔗 API URL:', URL_BASE); // Para debug
 
