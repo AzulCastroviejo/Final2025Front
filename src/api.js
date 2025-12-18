@@ -10,7 +10,7 @@ const api = axios.create({
   headers: { 
     'Content-Type': 'application/json'
   },
-  timeout: 30000, // 10 segundos
+  timeout: 30000, 
 })
 
 // Interceptor para agregar token a todas las peticiones
@@ -20,6 +20,7 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
+    console.log('📤 Request:', config.method.toUpperCase(), config.url);
     return config
   },
   error => {
@@ -29,7 +30,10 @@ api.interceptors.request.use(
 
 // Interceptor para manejar respuestas y errores
 api.interceptors.response.use(
-  response => response,
+  response => {
+    console.log('✅ Response:', response.status, response.config.url);
+    return response;
+  },
   error => {
     // Manejar errores de autenticación
     if (error.response?.status === 401) {
