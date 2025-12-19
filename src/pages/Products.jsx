@@ -73,7 +73,7 @@ export default function Products() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   // Cargar productos y categorías
@@ -125,10 +125,14 @@ export default function Products() {
   }
   // Filtrar productos
   const filteredProducts = products.filter(p => {
-    const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'All' || 
-                           p.category?.name === selectedCategory ||
-                           (!p.category && selectedCategory === 'Sin categoría');
+    const matchesSearch = p.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+    const matchesCategory =
+      selectedCategory === null ||
+      p.category?.id_key === selectedCategory;
+
     return matchesSearch && matchesCategory;
   });
 
@@ -173,9 +177,9 @@ export default function Products() {
             
             <div className="flex flex-wrap gap-2">
               <button
-                onClick={() => setSelectedCategory('All')}
+                onClick={() => setSelectedCategory(null)}
                 className={`px-4 py-2 rounded-lg transition-all ${
-                  selectedCategory === 'All'
+                  selectedCategory === null
                     ? 'bg-indigo-500 text-white'
                     : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                 }`}
@@ -185,9 +189,9 @@ export default function Products() {
               {categories.map(cat => (
                 <button
                   key={cat.id_key}
-                  onClick={() => setSelectedCategory(cat.name)}
+                  onClick={() => setSelectedCategory(cat.id_key)}
                   className={`px-4 py-2 rounded-lg transition-all ${
-                    selectedCategory === cat.name
+                    selectedCategory === cat.id_key
                       ? 'bg-indigo-500 text-white'
                       : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                   }`}
