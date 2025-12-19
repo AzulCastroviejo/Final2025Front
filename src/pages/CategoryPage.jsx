@@ -78,34 +78,25 @@ export default function CategoryPage() {
   }, [categoryId]);
 
   async function loadCategoryData() {
-    setLoading(true);
-    setError('');
-    
-    try {
-      // Cargar información de la categoría
-      const categoryRes = await api.get(`/categories/${categoryId}`);
-      setCategory(categoryRes.data);
+  setLoading(true);
+  setError('');
 
-      // Cargar productos de esta categoría
-      // Opción 1: Si tu backend tiene un endpoint específico
-      try {
-        const productsRes = await api.get(`/categories/${categoryId}/products`);
-        setProducts(productsRes.data);
-      } catch (err) {
-        // Opción 2: Filtrar desde todos los productos
-        const allProductsRes = await api.get('/products');
-        const filtered = allProductsRes.data.filter(
-          p => p.category?.id_key === categoryId
-        );
-        setProducts(filtered);
-      }
-    } catch (err) {
-      setError('No se pudo cargar la categoría');
-      console.error('Error:', err);
-    } finally {
-      setLoading(false);
-    }
+  try {
+    const categoryRes = await api.get(`/categories/${categoryId}`);
+
+    setCategory(categoryRes.data);
+
+    // 🔥 USAR DIRECTAMENTE LOS PRODUCTOS DE LA CATEGORÍA
+    setProducts(categoryRes.data.products || []);
+    console.log(categoryRes.data.products);
+
+  } catch (err) {
+    console.error(err);
+    setError('No se pudo cargar la categoría');
+  } finally {
+    setLoading(false);
   }
+}
 
   function handleAddToCart(product) {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
