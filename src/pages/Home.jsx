@@ -46,7 +46,7 @@ function FeaturedCategoryCard({ category, productCount }) {
 }
 
 // Componente de producto destacado (versión simplificada)
-function ProductCard({ product }) {
+function ProductCard({ product, categoryMap }) {
   const navigate = useNavigate();
   
   const handleAddToCart = (e) => {
@@ -89,7 +89,7 @@ function ProductCard({ product }) {
       
       <div className="p-5">
         <div className="text-xs text-indigo-400 mb-2">
-          {categoryMap[product.category_id] || 'Sin categoría'}
+          {categoryMap?.[product.category_id] || 'Sin categoría'}
         </div>
         <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-indigo-400 transition-colors line-clamp-1">
           {product.name}
@@ -117,6 +117,9 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const categoryMap = Object.fromEntries(
+    categories.map(cat => [cat.id_key, cat.name])
+  );
 
   useEffect(() => {
     loadHomeData();
@@ -278,7 +281,11 @@ export default function Home() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {featuredProducts.map(product => (
-                  <ProductCard key={product.id_key} product={product} />
+                  <ProductCard
+                    key={product.id_key}
+                    product={product}
+                    categoryMap={categoryMap}
+                  />
                 ))}
               </div>
             </div>
