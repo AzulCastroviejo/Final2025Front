@@ -131,8 +131,8 @@ export default function Products() {
 
     const matchesCategory =
       selectedCategory === null ||
-      p.category?.id_key === selectedCategory;
-
+      Number(p.category?.id_key) === Number(selectedCategory);
+    
     return matchesSearch && matchesCategory;
   });
 
