@@ -120,7 +120,7 @@ export default function Products() {
     alert(`${product.name} agregado al carrito`);
   }
 
-   function getProductCountByCategory(categoryId) {
+  function getProductCountByCategory(categoryId) {
     return products.filter(p => p.category?.id_key === categoryId).length;
   }
   // Filtrar productos
