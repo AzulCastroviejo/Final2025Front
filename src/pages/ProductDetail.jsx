@@ -7,6 +7,7 @@ import Navigation from '../components/Navigation';
 export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [categories, setCategories] = useState([]);
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
