@@ -123,24 +123,17 @@ export default function Products() {
   }
 
   function getProductCountByCategory(categoryId) {
-    return products.filter(p => p.category?.id_key === categoryId).length;
+    return products.filter(
+      p => Number(p.category_id) === Number(categoryId)
+    ).length;
   }
+
   // Filtrar productos
   const filteredProducts = products.filter(p => {
-   
-    const matchesCategory =
-      selectedCategory === null ||
-      Number(p.category?.id_key) === Number(selectedCategory);
-    
-    console.log('selectedCategory:', selectedCategory);
-    console.log(
-      products.map(p => ({
-        id: p.id_key,
-        category_id: p.category_id
-      }))
-    );
-    return  matchesCategory;
+    if (selectedCategory === null) return true;
+    return Number(p.category_id) === Number(selectedCategory);
   });
+
 
   // Obtener cantidad de items en carrito para el nav
   const cart = JSON.parse(localStorage.getItem('cart') || '[]');
