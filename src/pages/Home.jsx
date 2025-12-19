@@ -89,7 +89,7 @@ function ProductCard({ product }) {
       
       <div className="p-5">
         <div className="text-xs text-indigo-400 mb-2">
-          {product.category?.name || 'Sin categoría'}
+          {categoryMap[product.category_id] || 'Sin categoría'}
         </div>
         <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-indigo-400 transition-colors line-clamp-1">
           {product.name}
@@ -148,7 +148,9 @@ export default function Home() {
 
   // Contar productos por categoría
   function getProductCountByCategory(categoryId) {
-    return featuredProducts.filter(p => p.category?.id_key === categoryId).length;
+    return featuredProducts.filter(
+    p => p.category_id === categoryId
+  ).length;
   }
 
   const cart = JSON.parse(localStorage.getItem('cart') || '[]');
