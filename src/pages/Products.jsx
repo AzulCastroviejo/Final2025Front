@@ -92,6 +92,8 @@ export default function Products() {
         api.get('/categories')
       ]);
       
+      console.log('PRODUCTS RAW:', productsRes.data);
+
       setProducts(productsRes.data);
       setCategories(categoriesRes.data);
      
@@ -125,15 +127,19 @@ export default function Products() {
   }
   // Filtrar productos
   const filteredProducts = products.filter(p => {
-    const matchesSearch = p.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-
+   
     const matchesCategory =
       selectedCategory === null ||
       Number(p.category?.id_key) === Number(selectedCategory);
     
-    return matchesSearch && matchesCategory;
+    console.log('selectedCategory:', selectedCategory);
+    console.log(
+      products.map(p => ({
+        id: p.id_key,
+        category_id: p.category_id
+      }))
+    );
+    return  matchesCategory;
   });
 
   // Obtener cantidad de items en carrito para el nav
