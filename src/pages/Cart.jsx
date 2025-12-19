@@ -209,7 +209,7 @@ export default function Cart() {
                 Agrega productos para comenzar tu compra
               </p>
               <a
-                href="/products"
+                href="/products/"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white rounded-lg font-semibold transition-all"
               >
                 Ver Productos
