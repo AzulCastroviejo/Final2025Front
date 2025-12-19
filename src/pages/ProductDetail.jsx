@@ -11,6 +11,10 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [quantity, setQuantity] = useState(1);
+  const categoryMap = Object.fromEntries(
+    categories.map(cat => [cat.id_key, cat.name])
+  );
+
 
   useEffect(() => {
     loadProduct();
@@ -120,7 +124,7 @@ export default function ProductDetail() {
               {/* Category Badge */}
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/10 border border-indigo-500/30 rounded-full text-indigo-400 text-sm">
                 <Tag className="w-4 h-4" />
-                {product.category?.name || 'Sin categoría'}
+                {categoryMap?.[product.category_id] || 'Sin categoría'}
               </div>
 
               {/* Title */}
