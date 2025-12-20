@@ -5,7 +5,7 @@ import Navigation from '../components/Navigation';
 import { useNavigate } from "react-router-dom";
 
 // Componente de tarjeta de producto
-function ProductCard({ product, onAddToCart, onViewDetails }) {
+function ProductCard({ product, onAddToCart, onViewDetails,categoryMap }) {
 
   const navigate = useNavigate();
   
@@ -249,7 +249,7 @@ export default function Products() {
 }
 
 // Modal de detalles del producto
-function ProductDetailModal({ product, onClose, onAddToCart }) {
+function ProductDetailModal({ product, onClose, onAddToCart, categoryMap }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
       <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-700">
