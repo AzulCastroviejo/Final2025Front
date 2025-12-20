@@ -26,33 +26,29 @@ function App() {
 
   
   return (
-    <Router>
-      <Routes>
-        {/* Ruta principal - Home con categorías y productos destacados */}
-        <Route path="/" element={<Home />} />
-        
-        {/* Todos los productos */}
-        <Route path="/products" element={<Products />} />
-        
-        {/* Vista de productos por categoría */}
-        <Route path="/categories/:categoryId" element={<CategoryPage />} />
+    <Routes>
+       {/* Ruta principal - Home con categorías y productos destacados */}
+      <Route path="/" element={<Home />} />
       
-        {/* Detalle de producto */}
-        <Route path="/products/:id" element={<ProductDetail />} />
-        
-        {/* Carrito de compras */}
-        <Route path="/cart" element={<Cart />} />
-        
-        {/* Redireccionar dashboard */}
-        <Route path="/dashboard" element={<Dashboard />} />
+      {/* Todos los productos */}
+      <Route path="/products" element={<Products />} />
+      
+      {/* Vista de productos por categoría */}
+      <Route path="/categories/:categoryId" element={<CategoryPage />} />
+     
+      {/* Detalle de producto */}
+      <Route path="/products/:id" element={<ProductDetail />} />
+      
+      {/* Carrito de compras */}
+      <Route path="/cart" element={<Cart />} />
+      
+      {/* Redireccionar cualquier ruta no encontrada al home */}
+      {<Route path="*" element={<Navigate to="/" replace />} />}
 
-        {/* Redireccionar cualquier ruta no encontrada al home */}
-        {<Route path="*" element={<Navigate to="/" replace />} />}
+      {/* Redireccionar dashboard */}
+      <Route path="/dashboard" element={<Dashboard />} />
 
-        
-      </Routes>
-    </Router>
-
+    </Routes>
   );
 }
 
