@@ -27,8 +27,13 @@ export default function ProductDetail() {
     setError('');
     
     try {
-      const res = await api.get(`/products/${id}`);
-      setProduct(res.data);
+      const [productRes, categoriesRes] = await Promise.all([
+        api.get(`/products/${id}`),
+        api.get("/categories/")
+      ]);
+      setProduct(productRes.data);
+      setCategories(categoriesRes.data);
+
     } catch (err) {
       setError('No se pudo cargar el producto');
       console.error('Error:', err);
@@ -127,8 +132,8 @@ export default function ProductDetail() {
               {/* Category Badge */}
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/10 border border-indigo-500/30 rounded-full text-indigo-400 text-sm">
                  <Tag className="w-4 h-4" />
-                 {String(product.category_id.name) || 'Sin categoría'}
-                
+                 {categoryMap[product.category_id] || 'Sin categoría'}
+
               </div>
 
               {/* Title */}
