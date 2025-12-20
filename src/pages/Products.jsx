@@ -6,11 +6,9 @@ import { useNavigate } from "react-router-dom";
 
 // Componente de tarjeta de producto
 function ProductCard({ product, onAddToCart, onViewDetails }) {
-  const [categories, setCategories] = useState([]);
+
   const navigate = useNavigate();
-  const categoryMap = Object.fromEntries(
-    categories.map(cat => [cat.id_key, cat.name])
-  );
+  
   
   return (
     <div className="group bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl overflow-hidden border border-gray-700 hover:border-indigo-500/50 transition-all duration-300 animate-fade-in">
@@ -78,7 +76,9 @@ export default function Products() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
-
+  const categoryMap = Object.fromEntries(
+    categories.map(cat => [cat.id_key, cat.name])
+  );
   // Cargar productos y categorías
   useEffect(() => {
     loadData();
@@ -218,6 +218,7 @@ export default function Products() {
                   <ProductCard
                     key={product.id_key}
                     product={product}
+                    categoryMap={categoryMap}
                     onAddToCart={handleAddToCart}
                     onViewDetails={setSelectedProduct}
                   />
@@ -276,6 +277,9 @@ function ProductDetailModal({ product, onClose, onAddToCart }) {
               <div>
                 <div className="text-sm text-indigo-400 mb-2">
                   {product.category?.name || 'Sin categoría'}
+                </div>
+                <div className="text-sm text-indigo-400 mb-2">
+                  {categoryMap?.[product.category_id] || 'Sin categoría'}
                 </div>
                 <h3 className="text-3xl font-bold text-white mb-4">{product.name}</h3>
                 <div className="text-4xl font-bold bg-gradient-to-r from-indigo-400 to-violet-500 bg-clip-text text-transparent">
