@@ -126,15 +126,9 @@ export default function ProductDetail() {
             <div className="space-y-6">
               {/* Category Badge */}
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/10 border border-indigo-500/30 rounded-full text-indigo-400 text-sm">
-                 {featuredProducts.map(product => (
-                  <ProductCard
-                    key={product.id_key}
-                    product={product}
-                    categoryMap={categoryMap}
-                  />
-                ))}
-                {/*<Tag className="w-4 h-4" />
-                {categoryMap?.[product.category_id] || 'Sin categoría'}*/}
+                 <Tag className="w-4 h-4" />
+                 {String(categoryMap?.[product.category_id]) || 'Sin categoría'}
+                
               </div>
 
               {/* Title */}
