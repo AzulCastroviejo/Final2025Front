@@ -16,6 +16,10 @@ export default function Cart() {
     shipping_address: '',
     payment_method: 'card'
   });
+  const [categories, setCategories] = useState([]);
+  const categoryMap = Object.fromEntries(
+    categories.map(cat => [cat.id_key, cat.name])
+  );
   const navigate = useNavigate();
   // Cargar carrito desde localStorage
   useEffect(() => {
@@ -241,7 +245,7 @@ export default function Cart() {
                                   {item.name}
                                 </h3>
                                 <p className="text-sm text-gray-400">
-                                  {item.category?.name || 'Sin categoría'}
+                                  {categoryMap?.[item.category_id] || 'Sin categoría'}
                                 </p>
                               </div>
                               <button
