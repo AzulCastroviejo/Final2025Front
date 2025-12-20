@@ -6,8 +6,11 @@ import { useNavigate } from "react-router-dom";
 
 // Componente de tarjeta de producto
 function ProductCard({ product, onAddToCart, onViewDetails }) {
-   const navigate = useNavigate();
-  
+  const [categories, setCategories] = useState([]);
+  const navigate = useNavigate();
+  const categoryMap = Object.fromEntries(
+    categories.map(cat => [cat.id_key, cat.name])
+  );
   
   return (
     <div className="group bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl overflow-hidden border border-gray-700 hover:border-indigo-500/50 transition-all duration-300 animate-fade-in">
@@ -35,7 +38,7 @@ function ProductCard({ product, onAddToCart, onViewDetails }) {
           onClick={() => product.category?.id_key && navigate(`/categories/${product.category.id_key}`)}
           className="text-xs text-indigo-400 mb-2 hover:text-indigo-300 cursor-pointer inline-block"
         >
-          {product.category?.name || 'Sin categoría'}
+          {categoryMap[product.category_id] || 'Sin categoría'}
         </div>
          <h3 
           onClick={() => navigate(`/products/${product.id_key}`)}
