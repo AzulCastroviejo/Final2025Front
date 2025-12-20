@@ -1,314 +1,410 @@
-// src/pages/Cart.jsx - VERSIÓN CON MODAL DE CONFIRMACIÓN
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { ShoppingCart, X, ChevronRight, Trash2, CheckCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import Navigation from '../components/Navigation';
 import OrderSuccessModal from '../components/OrderSuccessModal';
+import api from '../api';
+import { Link } from "react-router-dom";
 
-const Cart = () => {
+export default function Cart() {
   const [cart, setCart] = useState([]);
-  const [clientData, setClientData] = useState({
+  const [loading, setLoading] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [orderData, setOrderData] = useState({
     client_name: '',
     client_email: '',
     client_phone: '',
-    shipping_address: ''
+    shipping_address: '',
+    payment_method: 'card'
   });
-  const [paymentMethod, setPaymentMethod] = useState('card');
-  const [deliveryMethod, setDeliveryMethod] = useState(3); // 1=DRIVE_THRU, 2=ON_HAND, 3=HOME_DELIVERY
-  const [isLoading, setIsLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
   
-  // Estado para el modal de éxito
+  // Estados para el modal de éxito
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [orderInfo, setOrderInfo] = useState({
     orderNumber: null,
     total: 0
   });
 
-  // URL del backend - CAMBIA ESTO POR TU URL DE RENDER
-  const API_URL = 'https://final2025python-main.render.com';
+  const categoryMap = Object.fromEntries(
+    categories.map(cat => [cat.id_key, cat.name])
+  );
+  const navigate = useNavigate();
 
-  // Cargar carrito del localStorage
+  // Cargar carrito desde localStorage
   useEffect(() => {
+    api.get("/categories/").then(res => setCategories(res.data));
+    loadCart();
+  }, []);
+
+  function loadCart() {
     const savedCart = JSON.parse(localStorage.getItem('cart') || '[]');
     setCart(savedCart);
-  }, []);
+  }
+
+  // Guardar carrito en localStorage
+  function saveCart(newCart) {
+    localStorage.setItem('cart', JSON.stringify(newCart));
+    setCart(newCart);
+  }
+
+  // Eliminar item del carrito
+  function removeItem(index) {
+    const newCart = cart.filter((_, i) => i !== index);
+    saveCart(newCart);
+  }
+
+  // Actualizar cantidad
+  function updateQuantity(index, newQuantity) {
+    if (newQuantity < 1) return;
+    
+    const newCart = [...cart];
+    newCart[index].quantity = newQuantity;
+    saveCart(newCart);
+  }
+
+  // Vaciar carrito
+  function clearCart() {
+    if (window.confirm('¿Estás seguro de vaciar el carrito?')) {
+      saveCart([]);
+    }
+  }
 
   // Calcular totales
   const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const tax = subtotal * 0.16; // 16% de impuestos
-  const shipping_cost = deliveryMethod === 3 ? 0 : 0; // Envío gratis por ahora
-  const total = subtotal + tax + shipping_cost;
+  const tax = subtotal * 0.16; // 16% IVA
+  const shipping = subtotal > 1000 ? 0 : 0; // Envío gratis
+  const total = subtotal + tax;
 
   // Generar número de orden aleatorio
   const generateOrderNumber = () => {
     return Math.floor(100000 + Math.random() * 900000);
   };
 
-  const handleSubmit = async (e) => {
+  // Finalizar compra
+  async function handleCreateOrder(e) {
     e.preventDefault();
-    setIsLoading(true);
+    
+    if (cart.length === 0) {
+      alert('El carrito está vacío');
+      return;
+    }
 
-    // Construir el objeto de la orden según el schema del backend
-    const orderData = {
-      client_name: clientData.client_name,
-      client_email: clientData.client_email,
-      client_phone: clientData.client_phone,
-      shipping_address: clientData.shipping_address,
-      payment_method: paymentMethod,
-      delivery_method: deliveryMethod,
-      items: cart.map(item => ({
-        product_id: item.id_key || item.product_id,
-        quantity: item.quantity,
-        price: item.price
-      })),
-      subtotal: subtotal,
-      tax: tax,
-      shipping_cost: shipping_cost,
-      total: total,
-      status: 'pending'
-    };
-
-    console.log('📦 Enviando orden:', orderData);
+    setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/orders`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData)
-      });
+      const orderItems = cart.map(item => ({
+        product_id: item.id_key,
+        quantity: item.quantity,
+        price: item.price
+      }));
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('❌ Error del servidor:', errorData);
-        throw new Error(errorData.detail || 'Error al crear la orden');
-      }
+      // Crear la orden con todos los campos requeridos
+      const orderPayload = {
+        client_name: orderData.client_name,
+        client_email: orderData.client_email,
+        client_phone: orderData.client_phone,
+        shipping_address: orderData.shipping_address,
+        payment_method: orderData.payment_method,
+        delivery_method: 3, // HOME_DELIVERY por defecto
+        items: orderItems,
+        subtotal: subtotal,
+        tax: tax,
+        shipping_cost: shipping,
+        total: total,
+        status: 'pending'
+      };
 
-      const result = await response.json();
-      console.log('✅ Orden creada exitosamente:', result);
+      console.log('📦 Enviando orden:', orderPayload);
+
+      // Enviar al backend
+      const response = await api.post('/orders', orderPayload);
+      
+      console.log('✅ Orden creada:', response.data);
       
       // Configurar información para el modal
       setOrderInfo({
-        orderNumber: result.id_key || generateOrderNumber(),
+        orderNumber: response.data.id_key || generateOrderNumber(),
         total: total
       });
-
+      
       // Limpiar carrito
-      localStorage.removeItem('cart');
-      setCart([]);
+      saveCart([]);
       
       // Mostrar modal de éxito
       setShowSuccessModal(true);
+      setLoading(false);
 
-    } catch (error) {
-      console.error('❌ Error:', error);
-      alert(`Hubo un error al procesar tu orden: ${error.message}`);
-    } finally {
-      setIsLoading(false);
+    } catch (err) {
+      console.error('❌ Error al crear orden:', err);
+      
+      const errorMessage = err.response?.data?.detail || 
+                          err.response?.data?.message || 
+                          'Error al procesar el pedido. Por favor intenta de nuevo.';
+      
+      alert(errorMessage);
+      setLoading(false);
     }
-  };
+  }
 
-  const removeFromCart = (index) => {
-    const newCart = cart.filter((_, i) => i !== index);
-    setCart(newCart);
-    localStorage.setItem('cart', JSON.stringify(newCart));
-  };
-
-  const updateQuantity = (index, newQuantity) => {
-    if (newQuantity < 1) return;
-    const newCart = [...cart];
-    newCart[index].quantity = newQuantity;
-    setCart(newCart);
-    localStorage.setItem('cart', JSON.stringify(newCart));
-  };
+  function handleInputChange(e) {
+    const { name, value } = e.target;
+    setOrderData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  }
 
   return (
-    <div className="container mx-auto p-4 max-w-6xl">
-      <h1 className="text-4xl font-bold mb-8 text-gray-800">🛒 Carrito de Compras</h1>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Lista de productos */}
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-semibold mb-4">Productos</h2>
-            
-            {cart.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-gray-500 text-lg mb-4">Tu carrito está vacío</p>
-                <button
-                  onClick={() => window.location.href = '/products'}
-                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
-                >
-                  Ir a Productos
-                </button>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {cart.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between border-b pb-4">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-lg">{item.name}</h3>
-                      <p className="text-gray-600">${item.price.toLocaleString('es-AR')}</p>
-                    </div>
-                    
-                    <div className="flex items-center gap-4">
-                      {/* Controles de cantidad */}
-                      <div className="flex items-center border rounded">
-                        <button
-                          onClick={() => updateQuantity(index, item.quantity - 1)}
-                          className="px-3 py-1 hover:bg-gray-100"
-                        >
-                          -
-                        </button>
-                        <span className="px-4 py-1 border-x">{item.quantity}</span>
-                        <button
-                          onClick={() => updateQuantity(index, item.quantity + 1)}
-                          className="px-3 py-1 hover:bg-gray-100"
-                        >
-                          +
-                        </button>
-                      </div>
-
-                      {/* Subtotal del producto */}
-                      <p className="font-bold w-24 text-right">
-                        ${(item.price * item.quantity).toLocaleString('es-AR')}
-                      </p>
-
-                      {/* Botón eliminar */}
-                      <button
-                        onClick={() => removeFromCart(index)}
-                        className="text-red-500 hover:text-red-700 px-2"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+    <>
+      <Navigation cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)} />
+      
+      <div className="min-h-screen bg-black pt-20 pb-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-8">
+            <h1 className="text-3xl font-bold text-white">
+              Carrito de Compras
+            </h1>
+            {cart.length > 0 && (
+              <button
+                onClick={clearCart}
+                className="px-4 py-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors flex items-center gap-2"
+              >
+                <Trash2 className="w-4 h-4" />
+                Vaciar Carrito
+              </button>
             )}
           </div>
-        </div>
 
-        {/* Formulario de checkout */}
-        <div className="lg:col-span-1">
-          <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-6 sticky top-4">
-            <h2 className="text-2xl font-bold mb-4">Datos de Envío</h2>
+          {cart.length === 0 ? (
+            /* Empty Cart */
+            <div className="text-center py-16 bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl border border-gray-700">
+              <ShoppingCart className="w-24 h-24 text-gray-600 mx-auto mb-6" />
+              <h2 className="text-2xl font-semibold text-white mb-2">
+                Tu carrito está vacío
+              </h2>
+              <p className="text-gray-400 mb-6">
+                Agrega productos para comenzar tu compra
+              </p>
+              
+              <Link 
+                to="/products/"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white rounded-lg font-semibold transition-all"
+              >
+                Ver Productos
+                <ChevronRight className="w-5 h-5" />
+              </Link>
+            </div>
+          ) : (
+            <div className="grid lg:grid-cols-3 gap-8">
+              {/* Cart Items */}
+              <div className="lg:col-span-2">
+                {!showCheckout ? (
+                  <div className="space-y-4">
+                    {cart.map((item, index) => (
+                      <div
+                        key={index}
+                        className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700 animate-fade-in"
+                      >
+                        <div className="flex flex-col sm:flex-row gap-6">
+                          <img
+                            src={item.image || `https://via.placeholder.com/150x150/1f2937/6366f1?text=${encodeURIComponent(item.name)}`}
+                            alt={item.name}
+                            className="w-full sm:w-32 h-32 object-cover rounded-lg"
+                          />
 
-            <div className="space-y-4 mb-6">
-              <div>
-                <label className="block text-gray-700 mb-2 font-medium">Nombre completo *</label>
-                <input
-                  type="text"
-                  required
-                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={clientData.client_name}
-                  onChange={(e) => setClientData({...clientData, client_name: e.target.value})}
-                  placeholder="Juan Pérez"
-                />
+                          <div className="flex-1">
+                            <div className="flex items-start justify-between mb-2">
+                              <div>
+                                <h3 className="text-lg font-semibold text-white mb-1">
+                                  {item.name}
+                                </h3>
+                                <p className="text-sm text-gray-400">
+                                  {categoryMap?.[item.category_id] || 'Sin categoría'}
+                                </p>
+                              </div>
+                              <button
+                                onClick={() => removeItem(index)}
+                                className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                              >
+                                <X className="w-5 h-5" />
+                              </button>
+                            </div>
+
+                            <div className="flex items-center justify-between mt-4">
+                              <div className="text-indigo-400 font-semibold text-lg">
+                                ${item.price}
+                              </div>
+
+                              <div className="flex items-center gap-3">
+                                <span className="text-gray-400 text-sm">Cantidad:</span>
+                                <div className="flex items-center gap-2 bg-gray-800 rounded-lg">
+                                  <button
+                                    onClick={() => updateQuantity(index, item.quantity - 1)}
+                                    className="px-3 py-2 text-white hover:bg-gray-700 rounded-l-lg transition-colors"
+                                  >
+                                    -
+                                  </button>
+                                  <span className="px-4 text-white font-semibold">
+                                    {item.quantity}
+                                  </span>
+                                  <button
+                                    onClick={() => updateQuantity(index, item.quantity + 1)}
+                                    className="px-3 py-2 text-white hover:bg-gray-700 rounded-r-lg transition-colors"
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                              </div>
+
+                              <div className="text-white font-bold text-xl">
+                                ${(item.price * item.quantity).toFixed(2)}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  /* Checkout Form */
+                  <form onSubmit={handleCreateOrder} className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700">
+                    <h2 className="text-2xl font-bold text-white mb-6">
+                      Información de Envío
+                    </h2>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-gray-300 mb-2">Nombre Completo *</label>
+                        <input
+                          type="text"
+                          name="client_name"
+                          value={orderData.client_name}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                          placeholder="Juan Pérez"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-gray-300 mb-2">Email *</label>
+                        <input
+                          type="email"
+                          name="client_email"
+                          value={orderData.client_email}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                          placeholder="juan@ejemplo.com"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-gray-300 mb-2">Teléfono *</label>
+                        <input
+                          type="tel"
+                          name="client_phone"
+                          value={orderData.client_phone}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                          placeholder="+54 9 11 1234-5678"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-gray-300 mb-2">Dirección de Envío *</label>
+                        <textarea
+                          name="shipping_address"
+                          value={orderData.shipping_address}
+                          onChange={handleInputChange}
+                          required
+                          rows="3"
+                          className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                          placeholder="Calle Falsa 123, Piso 4, Depto B, Mendoza"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-gray-300 mb-2">Método de Pago *</label>
+                        <select
+                          name="payment_method"
+                          value={orderData.payment_method}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                        >
+                          <option value="card">Tarjeta de Crédito/Débito</option>
+                          <option value="transfer">Transferencia Bancaria</option>
+                          <option value="cash">Efectivo (Contra Entrega)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-4 mt-6">
+                      <button
+                        type="button"
+                        onClick={() => setShowCheckout(false)}
+                        className="flex-1 px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all"
+                      >
+                        Volver
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="flex-1 px-6 py-3 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white rounded-lg font-semibold transition-all disabled:opacity-50"
+                      >
+                        {loading ? 'Procesando...' : 'Confirmar Pedido'}
+                      </button>
+                    </div>
+                  </form>
+                )}
               </div>
 
-              <div>
-                <label className="block text-gray-700 mb-2 font-medium">Email *</label>
-                <input
-                  type="email"
-                  required
-                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={clientData.client_email}
-                  onChange={(e) => setClientData({...clientData, client_email: e.target.value})}
-                  placeholder="juan@example.com"
-                />
-              </div>
+              {/* Order Summary */}
+              <div className="lg:col-span-1">
+                <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-indigo-500/30 sticky top-24">
+                  <h2 className="text-xl font-bold text-white mb-6">
+                    Resumen del Pedido
+                  </h2>
 
-              <div>
-                <label className="block text-gray-700 mb-2 font-medium">Teléfono *</label>
-                <input
-                  type="tel"
-                  required
-                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={clientData.client_phone}
-                  onChange={(e) => setClientData({...clientData, client_phone: e.target.value})}
-                  placeholder="2612077095"
-                />
-              </div>
+                  <div className="space-y-4 mb-6">
+                    <div className="flex items-center justify-between text-gray-300">
+                      <span>Subtotal ({cart.length} items)</span>
+                      <span className="font-semibold">${subtotal.toFixed(2)}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-gray-300">
+                      <span>IVA (16%)</span>
+                      <span className="font-semibold">${tax.toFixed(2)}</span>
+                    </div>
+                    <div className="border-t border-gray-700 pt-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xl text-gray-300">Total</span>
+                        <span className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-violet-500 bg-clip-text text-transparent">
+                          ${total.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
 
-              <div>
-                <label className="block text-gray-700 mb-2 font-medium">Dirección de envío *</label>
-                <input
-                  type="text"
-                  required
-                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={clientData.shipping_address}
-                  onChange={(e) => setClientData({...clientData, shipping_address: e.target.value})}
-                  placeholder="Calle Falsa 123"
-                />
-              </div>
+                  {!showCheckout ? (
+                    <button
+                      onClick={() => setShowCheckout(true)}
+                      className="w-full px-6 py-4 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white rounded-xl font-semibold transition-all flex items-center justify-center gap-2"
+                    >
+                      Proceder al Pago
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  ) : null}
 
-              <div>
-                <label className="block text-gray-700 mb-2 font-medium">Método de entrega</label>
-                <select
-                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={deliveryMethod}
-                  onChange={(e) => setDeliveryMethod(Number(e.target.value))}
-                >
-                  <option value={1}>🚗 Drive-thru (Retiro en auto)</option>
-                  <option value={2}>🏪 Retiro en tienda</option>
-                  <option value={3}>🚚 Envío a domicilio</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-gray-700 mb-2 font-medium">Método de pago</label>
-                <select
-                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                >
-                  <option value="card">💳 Tarjeta</option>
-                  <option value="cash">💵 Efectivo</option>
-                </select>
+                  <p className="text-xs text-gray-500 text-center mt-4">
+                    Envío gratuito en compras mayores a $1000
+                  </p>
+                </div>
               </div>
             </div>
-
-            {/* Resumen de la orden */}
-            <div className="border-t pt-4 space-y-2 mb-6">
-              <div className="flex justify-between text-gray-600">
-                <span>Subtotal:</span>
-                <span>${subtotal.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
-              </div>
-              <div className="flex justify-between text-gray-600">
-                <span>Impuestos (16%):</span>
-                <span>${tax.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
-              </div>
-              <div className="flex justify-between text-gray-600">
-                <span>Envío:</span>
-                <span>${shipping_cost.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
-              </div>
-              <div className="flex justify-between font-bold text-xl pt-2 border-t">
-                <span>Total:</span>
-                <span className="text-green-600">${total.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
-              disabled={cart.length === 0 || isLoading}
-            >
-              {isLoading ? (
-                <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Procesando...
-                </span>
-              ) : (
-                '🎉 Finalizar Compra'
-              )}
-            </button>
-
-            <p className="text-xs text-gray-500 text-center mt-4">
-              🔒 Tu información está segura y protegida
-            </p>
-          </form>
+          )}
         </div>
       </div>
 
@@ -319,8 +415,6 @@ const Cart = () => {
         orderNumber={orderInfo.orderNumber}
         orderTotal={orderInfo.total}
       />
-    </div>
+    </>
   );
-};
-
-export default Cart;
+}
