@@ -129,6 +129,8 @@ export default function ProductDetail() {
                 {featuredProducts.map(product => (
                  
                   <Tag className="w-4 h-4" 
+                  key={product.id_key}
+                  product={product}
                   categoryMap={categoryMap}
                   />
                  
