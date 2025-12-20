@@ -1,5 +1,5 @@
 import React from 'react';
-import { User, ShoppingBag, Package, TrendingUp } from 'lucide-react';
+import { user, ShoppingBag, Package, TrendingUp } from 'lucide-react';
 import Navigation from '../components/Navigation';
 
 export default function Dashboard() {
