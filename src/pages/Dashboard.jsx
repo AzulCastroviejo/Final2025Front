@@ -112,7 +112,7 @@ export default function Dashboard() {
               onChange={e => setNewProduct({ ...newProduct, image: e.target.value })} className="w-full p-2 rounded" />
             <select value={newProduct.category_id}
               onChange={e => setNewProduct({ ...newProduct, category_id: e.target.value })}
-              className="w-full p-2 rounded">
+              className="w-full p-2 rounded bg-gray-900 text-white border border-gray-700 focus:outline-none focus:border-indigo-500">
               <option value="">Seleccionar Categoría</option>
               {categories.map(cat => (
                 <option key={cat.id_key} value={cat.id_key}>{cat.name}</option>
