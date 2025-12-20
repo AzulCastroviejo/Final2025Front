@@ -202,6 +202,14 @@ export default function Home() {
               Ver Todos los Productos
               <ChevronRight className="w-5 h-5" />
             </button>
+            <button
+              onClick={() => navigate('/dashboard/')}
+              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white rounded-xl font-semibold text-lg transition-all shadow-lg shadow-pink-500/25 animate-fade-in"
+            >
+              Ir al Dashboard
+              <ChevronRight className="w-5 h-5" />
+            </button>
+
           </div>
 
           {/* Promotional Banner */}
