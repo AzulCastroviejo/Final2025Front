@@ -22,7 +22,7 @@ export default function Navigation({ cartCount = 0 }) {
 
     async function loadCategories() {
       try {
-        const res = await api.get('/categories');
+        const res = await api.get('/categories/');
         setCategories(res.data);
       } catch (err) {
         console.error('Error loading categories:', err);
@@ -48,10 +48,10 @@ export default function Navigation({ cartCount = 0 }) {
               Inicio
             </Link>
             <Link 
-              to="/products"
+              to="/products/"
               className="text-gray-300 hover:text-white transition-colors"
             >
-              Products
+              Productos
             </Link>
             
 
@@ -101,7 +101,7 @@ export default function Navigation({ cartCount = 0 }) {
             </button>
             
             <Link 
-              to="/cart"
+              to="/cart/"
               className="p-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all relative"
             >
               <ShoppingCart className="w-5 h-5" />
@@ -152,7 +152,7 @@ export default function Navigation({ cartCount = 0 }) {
             </div>
 
             <Link 
-              to="/cart"
+              to="/cart/"
               onClick={() => setIsMenuOpen(false)}
               className="block w-full text-left px-4 py-2 text-gray-300 hover:bg-gray-800 rounded-lg flex items-center justify-between"
             >

@@ -17,12 +17,15 @@ export default function Cart() {
     payment_method: 'card'
   });
   const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+
   const categoryMap = Object.fromEntries(
     categories.map(cat => [cat.id_key, cat.name])
   );
   const navigate = useNavigate();
   // Cargar carrito desde localStorage
   useEffect(() => {
+    api.get("/categories/").then(res => setCategories(res.data));
     loadCart();
   }, []);
 
@@ -212,13 +215,14 @@ export default function Cart() {
               <p className="text-gray-400 mb-6">
                 Agrega productos para comenzar tu compra
               </p>
-              <a
-                href="/products"
+              
+              <Link 
+                to="/products/"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white rounded-lg font-semibold transition-all"
               >
                 Ver Productos
                 <ChevronRight className="w-5 h-5" />
-              </a>
+              </Link>
             </div>
           ) : (
             <div className="grid lg:grid-cols-3 gap-8">
