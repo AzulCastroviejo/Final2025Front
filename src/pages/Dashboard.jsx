@@ -3,7 +3,7 @@ import { User, ShoppingBag, Package, TrendingUp } from 'lucide-react';
 import Navigation from '../components/Navigation';
 
 export default function Dashboard() {
-  //const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
   const cart = JSON.parse(localStorage.getItem('cart') || '[]');
   const cartCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
 
