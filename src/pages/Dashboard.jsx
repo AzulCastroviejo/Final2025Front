@@ -1,177 +1,171 @@
-import React from 'react';
-import { User, ShoppingBag, Package, TrendingUp } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 import Navigation from '../components/Navigation';
+import api from '../api';
 
 export default function Dashboard() {
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
   const cart = JSON.parse(localStorage.getItem('cart') || '[]');
   const cartCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
 
-  // Stats de ejemplo
-  const stats = [
-    {
-      title: 'Pedidos Totales',
-      value: '12',
-      icon: ShoppingBag,
-      color: 'from-indigo-500 to-violet-500',
-      bgColor: 'bg-indigo-500/10',
-      borderColor: 'border-indigo-500/30'
-    },
-    {
-      title: 'Productos Favoritos',
-      value: '8',
-      icon: Package,
-      color: 'from-violet-500 to-purple-500',
-      bgColor: 'bg-violet-500/10',
-      borderColor: 'border-violet-500/30'
-    },
-    {
-      title: 'Total Gastado',
-      value: '$2,450',
-      icon: TrendingUp,
-      color: 'from-purple-500 to-pink-500',
-      bgColor: 'bg-purple-500/10',
-      borderColor: 'border-purple-500/30'
+  // Estados
+  const [categories, setCategories] = useState([]);
+  const [newCategory, setNewCategory] = useState({ name: '', description: '' });
+  const [newProduct, setNewProduct] = useState({
+    name: '',
+    price: '',
+    stock: '',
+    description: '',
+    image: '',
+    category_id: ''
+  });
+  const [orders, setOrders] = useState([]);
+  const [bills, setBills] = useState([]);
+
+  // Cargar categorías, órdenes y facturas
+  useEffect(() => {
+    api.get('/categories').then(res => setCategories(res.data));
+    api.get('/orders').then(res => setOrders(res.data));
+    api.get('/bills').then(res => setBills(res.data));
+  }, []);
+
+  // Crear categoría
+  async function handleCreateCategory(e) {
+    e.preventDefault();
+    try {
+      const res = await api.post('/categories', newCategory);
+      alert('Categoría creada');
+      setCategories([...categories, res.data]);
+      setNewCategory({ name: '', description: '' });
+    } catch (err) {
+      console.error(err);
+      alert('Error al crear categoría');
     }
-  ];
+  }
+
+  // Crear producto
+  async function handleCreateProduct(e) {
+    e.preventDefault();
+    try {
+      const payload = {
+        ...newProduct,
+        price: Number(newProduct.price),
+        stock: Number(newProduct.stock)
+      };
+      const res = await api.post('/products', payload);
+      alert('Producto creado');
+      setNewProduct({
+        name: '',
+        price: '',
+        stock: '',
+        description: '',
+        image: '',
+        category_id: ''
+      });
+    } catch (err) {
+      console.error(err);
+      alert('Error al crear producto');
+    }
+  }
 
   return (
     <>
       <Navigation cartCount={cartCount} />
-      
-      <div className="min-h-screen bg-black pt-20 pb-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-              Bienvenido, <span className="bg-gradient-to-r from-indigo-400 to-violet-500 bg-clip-text text-transparent">
-                {user.name || 'Usuario'}
-              </span>
-            </h1>
-            <p className="text-gray-400">
-              Gestiona tu cuenta y revisa tus pedidos
-            </p>
-          </div>
+      <div className="min-h-screen bg-black pt-20 pb-12 px-6">
+        <h1 className="text-3xl text-white mb-6">Dashboard</h1>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            {stats.map((stat, index) => (
-              <div
-                key={index}
-                className={`${stat.bgColor} border ${stat.borderColor} rounded-xl p-6 animate-fade-in`}
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`p-3 bg-gradient-to-br ${stat.color} rounded-lg`}>
-                    <stat.icon className="w-6 h-6 text-white" />
-                  </div>
-                </div>
-                <div className="text-3xl font-bold text-white mb-1">
-                  {stat.value}
-                </div>
-                <div className="text-gray-400 text-sm">
-                  {stat.title}
-                </div>
-              </div>
-            ))}
-          </div>
+        {/* Formulario Categoría */}
+        <div className="bg-gray-800 p-6 rounded-lg mb-8">
+          <h2 className="text-xl text-white mb-4">Crear Categoría</h2>
+          <form onSubmit={handleCreateCategory} className="space-y-4">
+            <input
+              type="text"
+              placeholder="Nombre"
+              value={newCategory.name}
+              onChange={e => setNewCategory({ ...newCategory, name: e.target.value })}
+              className="w-full p-2 rounded"
+            />
+            <input
+              type="text"
+              placeholder="Descripción"
+              value={newCategory.description}
+              onChange={e => setNewCategory({ ...newCategory, description: e.target.value })}
+              className="w-full p-2 rounded"
+            />
+            <button type="submit" className="px-4 py-2 bg-indigo-500 text-white rounded">
+              Crear Categoría
+            </button>
+          </form>
+        </div>
 
-          {/* User Info */}
-          <div className="grid lg:grid-cols-3 gap-6">
-            {/* Profile Card */}
-            <div className="lg:col-span-1">
-              <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700">
-                <h2 className="text-xl font-bold text-white mb-6">
-                  Información Personal
-                </h2>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 p-3 bg-gray-800 rounded-lg">
-                    <User className="w-5 h-5 text-indigo-400" />
-                    <div>
-                      <div className="text-xs text-gray-400">Nombre</div>
-                      <div className="text-white font-semibold">
-                        {user.name} {user.lastname}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 bg-gray-800 rounded-lg">
-                    <div className="text-indigo-400">📧</div>
-                    <div>
-                      <div className="text-xs text-gray-400">Email</div>
-                      <div className="text-white font-semibold">
-                        {user.email}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 bg-gray-800 rounded-lg">
-                    <div className="text-indigo-400">📱</div>
-                    <div>
-                      <div className="text-xs text-gray-400">Teléfono</div>
-                      <div className="text-white font-semibold">
-                        {user.telephone || 'No registrado'}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <button className="w-full mt-6 px-4 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors">
-                  Editar Perfil
-                </button>
-              </div>
-            </div>
+        {/* Formulario Producto */}
+        <div className="bg-gray-800 p-6 rounded-lg mb-8">
+          <h2 className="text-xl text-white mb-4">Crear Producto</h2>
+          <form onSubmit={handleCreateProduct} className="space-y-4">
+            <input type="text" placeholder="Nombre" value={newProduct.name}
+              onChange={e => setNewProduct({ ...newProduct, name: e.target.value })} className="w-full p-2 rounded" />
+            <input type="number" placeholder="Precio" value={newProduct.price}
+              onChange={e => setNewProduct({ ...newProduct, price: e.target.value })} className="w-full p-2 rounded" />
+            <input type="number" placeholder="Stock" value={newProduct.stock}
+              onChange={e => setNewProduct({ ...newProduct, stock: e.target.value })} className="w-full p-2 rounded" />
+            <textarea placeholder="Descripción" value={newProduct.description}
+              onChange={e => setNewProduct({ ...newProduct, description: e.target.value })} className="w-full p-2 rounded" />
+            <input type="text" placeholder="URL Imagen" value={newProduct.image}
+              onChange={e => setNewProduct({ ...newProduct, image: e.target.value })} className="w-full p-2 rounded" />
+            <select value={newProduct.category_id}
+              onChange={e => setNewProduct({ ...newProduct, category_id: e.target.value })}
+              className="w-full p-2 rounded">
+              <option value="">Seleccionar Categoría</option>
+              {categories.map(cat => (
+                <option key={cat.id_key} value={cat.id_key}>{cat.name}</option>
+              ))}
+            </select>
+            <button type="submit" className="px-4 py-2 bg-indigo-500 text-white rounded">
+              Crear Producto
+            </button>
+          </form>
+        </div>
 
-            {/* Recent Orders */}
-            <div className="lg:col-span-2">
-              <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700">
-                <h2 className="text-xl font-bold text-white mb-6">
-                  Pedidos Recientes
-                </h2>
-                <div className="space-y-4">
-                  {/* Ejemplo de pedido */}
-                  <div className="p-4 bg-gray-800 rounded-lg border border-gray-700">
-                    <div className="flex items-center justify-between mb-3">
-                      <div>
-                        <div className="text-white font-semibold">
-                          Pedido #12345
-                        </div>
-                        <div className="text-sm text-gray-400">
-                          15 Nov 2025
-                        </div>
-                      </div>
-                      <div className="px-3 py-1 bg-green-500/10 border border-green-500/30 rounded-full text-green-400 text-sm">
-                        Entregado
-                      </div>
-                    </div>
-                    <div className="text-gray-300">
-                      3 productos - Total: $599.99
-                    </div>
-                  </div>
+        {/* Tabla Orders */}
+        <div className="bg-gray-800 p-6 rounded-lg mb-8">
+          <h2 className="text-xl text-white mb-4">Órdenes</h2>
+          <table className="w-full text-white">
+            <thead>
+              <tr>
+                <th>ID</th><th>Cliente</th><th>Total</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map(order => (
+                <tr key={order.id}>
+                  <td>{order.id}</td>
+                  <td>{order.client_name}</td>
+                  <td>${order.total}</td>
+                  <td>{order.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-                  <div className="p-4 bg-gray-800 rounded-lg border border-gray-700">
-                    <div className="flex items-center justify-between mb-3">
-                      <div>
-                        <div className="text-white font-semibold">
-                          Pedido #12344
-                        </div>
-                        <div className="text-sm text-gray-400">
-                          10 Nov 2025
-                        </div>
-                      </div>
-                      <div className="px-3 py-1 bg-blue-500/10 border border-blue-500/30 rounded-full text-blue-400 text-sm">
-                        En tránsito
-                      </div>
-                    </div>
-                    <div className="text-gray-300">
-                      1 producto - Total: $199.99
-                    </div>
-                  </div>
-
-                  <div className="text-center py-8 text-gray-500">
-                    Integra con tu API de pedidos para mostrar datos reales
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* Tabla Bills */}
+        <div className="bg-gray-800 p-6 rounded-lg">
+          <h2 className="text-xl text-white mb-4">Facturas</h2>
+          <table className="w-full text-white">
+            <thead>
+              <tr>
+                <th>ID</th><th>Orden</th><th>Monto</th><th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              {bills.map(bill => (
+                <tr key={bill.id}>
+                  <td>{bill.id}</td>
+                  <td>{bill.order_id}</td>
+                  <td>${bill.amount}</td>
+                  <td>{bill.date}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </>
