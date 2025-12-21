@@ -134,7 +134,8 @@ export default function Cart() {
         client_id: clientId,
         bill_id: billId,
         delivery_method: orderData.delivery_method,
-        status: 'PENDING'
+        status: 'pending', // Corregido a minúsculas según el error
+        total: total, 
       };
       const orderResponse = await api.post('/orders', orderPayload);
       const orderId = orderResponse.data.id_key;
