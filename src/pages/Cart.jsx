@@ -166,9 +166,17 @@ export default function Cart() {
 
     } catch (err) {
       console.error('❌ Error en el proceso de creación de orden:', err);
-      const errorMessage = err.response?.data?.detail || 
-                           err.response?.data?.message || 
-                           'Ocurrió un error al procesar el pedido. Por favor intenta de nuevo.';
+      let errorMessage = 'Ocurrió un error inesperado.';
+      if (err.response && err.response.data && err.response.data.detail) {
+          const detail = err.response.data.detail;
+          if (Array.isArray(detail)) {
+            errorMessage = detail.map(e => `${e.loc.join('.')} - ${e.msg}`).join('\n');
+          } else {
+            errorMessage = JSON.stringify(detail);
+          }
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
       alert(`Error: ${errorMessage}`);
     } finally {
       setLoading(false);
