@@ -112,9 +112,9 @@ export default function Cart() {
       // PASO 3: Crear la factura (Bill)
       console.log('PASO 3: Creando factura...');
        const paymentTypeMapping = {
-        card: 'CARD',
-        transfer: 'BANK_TRANSFER',
-        cash: 'CASH',
+        card: 'card',
+        transfer: 'bank_transfer',
+        cash: 'cash',
       };
 
       const billPayload = {
