@@ -230,7 +230,32 @@ export default function Cart() {
                   <div className="space-y-4">
                     {cart.map((item, index) => (
                       <div key={index} className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700 animate-fade-in">
-                         {/* ... (código de item sin cambios) ... */}
+                        <div className="flex flex-col sm:flex-row gap-6">
+                          <img src={item.image || `https://via.placeholder.com/150x150/1f2937/6366f1?text=${encodeURIComponent(item.name)}`} alt={item.name} className="w-full sm:w-32 h-32 object-cover rounded-lg" />
+                          <div className="flex-1">
+                            <div className="flex items-start justify-between mb-2">
+                              <div>
+                                <h3 className="text-lg font-semibold text-white mb-1">{item.name}</h3>
+                                <p className="text-sm text-gray-400">{categoryMap?.[item.category_id] || 'Sin categoría'}</p>
+                              </div>
+                              <button onClick={() => removeItem(index)} className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors">
+                                <X className="w-5 h-5" />
+                              </button>
+                            </div>
+                            <div className="flex items-center justify-between mt-4">
+                              <div className="text-indigo-400 font-semibold text-lg">${item.price}</div>
+                              <div className="flex items-center gap-3">
+                                <span className="text-gray-400 text-sm">Cantidad:</span>
+                                <div className="flex items-center gap-2 bg-gray-800 rounded-lg">
+                                  <button onClick={() => updateQuantity(index, item.quantity - 1)} className="px-3 py-2 text-white hover:bg-gray-700 rounded-l-lg transition-colors">-</button>
+                                  <span className="px-4 text-white font-semibold">{item.quantity}</span>
+                                  <button onClick={() => updateQuantity(index, item.quantity + 1)} className="px-3 py-2 text-white hover:bg-gray-700 rounded-r-lg transition-colors">+</button>
+                                </div>
+                              </div>
+                              <div className="text-white font-bold text-xl">${(item.price * item.quantity).toFixed(2)}</div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>
