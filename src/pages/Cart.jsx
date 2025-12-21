@@ -111,8 +111,17 @@ export default function Cart() {
 
       // PASO 3: Crear la factura (Bill)
       console.log('PASO 3: Creando factura...');
+       const paymentTypeMapping = {
+        card: 'CARD',
+        transfer: 'BANK_TRANSFER',
+        cash: 'CASH',
+      };
+
       const billPayload = {
+        bill_number: `BILL-${Date.now()}`,
+        date: new Date().toISOString().split('T')[0], // Formato YYYY-MM-DD
         total: total,
+        payment_type: paymentTypeMapping[orderData.payment_method],
         client_id: clientId,
       };
       const billResponse = await api.post('/bills', billPayload);
