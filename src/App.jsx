@@ -6,7 +6,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
-import Cart from './pages/Cart';
+import Cart from './pages/Cartviejo';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import CategoryPage from './pages/CategoryPage';
@@ -44,6 +44,9 @@ function App() {
       
       {/* Redireccionar dashboard */}
       <Route path="/dashboard" element={<Dashboard />} />
+      
+      {/* Página de detalles del pedido */}
+      <Route path="/orders/:orderId" element={<OrderDetails />} />
 
       {/* Redireccionar cualquier ruta no encontrada al home */}
       {<Route path="*" element={<Navigate to="/" replace />} />}
