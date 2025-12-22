@@ -6,7 +6,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
-import Cart from './pages/Cartviejo';
+import Cart from './pages/Cart';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import CategoryPage from './pages/CategoryPage';
