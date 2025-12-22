@@ -11,7 +11,8 @@ const OrderSuccessModal = ({ isOpen, onClose, orderNumber, orderTotal }) => {
 
   const handleContinueShopping = () => {
     onClose();
-    window.location.href = '/products/'; // Redirige a tu catálogo
+    navigate(`/products/`);
+   
   };
 
   const handleViewOrder = () => {
