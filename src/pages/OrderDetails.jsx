@@ -25,10 +25,10 @@ export default function OrderDetails() {
     );
   }
 
-  if (error) {
+  if (error || !order) {
     return (
       <div className="min-h-screen bg-black flex flex-col items-center justify-center text-red-400">
-        <p>{error}</p>
+        <p>{error || 'No se encontró el pedido.'}</p>
         <Link to="/" className="mt-4 text-indigo-400 hover:underline">
           Volver al inicio
         </Link>
@@ -106,7 +106,8 @@ export default function OrderDetails() {
             {order.order_details?.length > 0 ? (
                 <div className="space-y-4">
                     {order.order_details.map(item => {
-                    const product = productMap[item.product_id];
+                    // Accedemos directamente al producto anidado
+                    const product = item.product;
 
                     return (
                         <div
@@ -124,7 +125,7 @@ export default function OrderDetails() {
 
                         <div className="flex-1">
                             <p className="text-white font-semibold">
-                            {product?.name || 'Producto'}
+                            {product?.name || 'Producto no encontrado'}
                             </p>
                             <p className="text-gray-400 text-sm">
                             Cantidad: {item.quantity}
@@ -143,7 +144,7 @@ export default function OrderDetails() {
                 </div>
                 ) : (
                 <p className="text-gray-400">
-                    No se encontraron productos para este pedido.
+                    No se encontraron detalles de productos para este pedido.
                 </p>
                 )}
           </div>
