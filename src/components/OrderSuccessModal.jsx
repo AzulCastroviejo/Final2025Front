@@ -3,12 +3,13 @@ import React from 'react';
 import { CheckCircle, ShoppingBag, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+const navigate = useNavigate();
 const OrderSuccessModal = ({ isOpen, onClose, orderNumber, orderTotal }) => {
   if (!isOpen) return null;
 
   const handleContinueShopping = () => {
     onClose();
-    window.location.href = '/products'; // Redirige a tu catálogo
+    window.location.href = '/products/'; // Redirige a tu catálogo
   };
 
   const handleViewOrder = () => {
