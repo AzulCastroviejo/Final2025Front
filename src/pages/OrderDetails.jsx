@@ -104,44 +104,48 @@ export default function OrderDetails() {
             </h2>
 
             {order.order_details?.length > 0 ? (
-              <div className="space-y-4">
-                {order.order_details.map(item => (
-                  <div
-                    key={item.id_key}
-                    className="flex gap-4 items-center bg-gray-800 rounded-xl p-4 border border-gray-700"
-                  >
-                    <img
-                      src={
-                        item.product?.image ||
-                        `https://via.placeholder.com/120x120/1f2937/6366f1?text=${encodeURIComponent(item.product?.name || 'Producto')}`
-                      }
-                      alt={item.product?.name}
-                      className="w-20 h-20 rounded-lg object-cover"
-                    />
+                <div className="space-y-4">
+                    {order.order_details.map(item => {
+                    const product = productMap[item.product_id];
 
-                    <div className="flex-1">
-                      <p className="text-white font-semibold">
-                        {item.product?.name || 'Producto'}
-                      </p>
-                      <p className="text-gray-400 text-sm">
-                        Cantidad: {item.quantity}
-                      </p>
-                      <p className="text-gray-500 text-sm">
-                        Precio unitario: ${item.price}
-                      </p>
-                    </div>
+                    return (
+                        <div
+                        key={item.id_key}
+                        className="flex gap-4 items-center bg-gray-800 rounded-xl p-4 border border-gray-700"
+                        >
+                        <img
+                            src={
+                            product?.image ||
+                            `https://via.placeholder.com/120x120/1f2937/6366f1?text=${encodeURIComponent(product?.name || 'Producto')}`
+                            }
+                            alt={product?.name}
+                            className="w-20 h-20 rounded-lg object-cover"
+                        />
 
-                    <p className="text-indigo-400 font-bold text-lg">
-                      ${(item.price * item.quantity).toFixed(2)}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-400">
-                No se encontraron productos para este pedido.
-              </p>
-            )}
+                        <div className="flex-1">
+                            <p className="text-white font-semibold">
+                            {product?.name || 'Producto'}
+                            </p>
+                            <p className="text-gray-400 text-sm">
+                            Cantidad: {item.quantity}
+                            </p>
+                            <p className="text-gray-500 text-sm">
+                            Precio unitario: ${item.price}
+                            </p>
+                        </div>
+
+                        <p className="text-indigo-400 font-bold text-lg">
+                            ${(item.price * item.quantity).toFixed(2)}
+                        </p>
+                        </div>
+                    );
+                    })}
+                </div>
+                ) : (
+                <p className="text-gray-400">
+                    No se encontraron productos para este pedido.
+                </p>
+                )}
           </div>
 
           {/* Resumen */}
