@@ -12,7 +12,7 @@ const OrderSuccessModal = ({ isOpen, onClose, orderNumber, orderTotal }) => {
 
   const handleViewOrder = () => {
     onClose();
-    window.location.href = `/orders/${orderNumber}`;
+    window.location.href = `/orders/${orderNumber.id_key}`;
   };
 
   return (
