@@ -3,8 +3,10 @@ import React from 'react';
 import { CheckCircle, ShoppingBag, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const navigate = useNavigate();
+
 const OrderSuccessModal = ({ isOpen, onClose, orderNumber, orderTotal }) => {
+  
+  const navigate = useNavigate();
   if (!isOpen) return null;
 
   const handleContinueShopping = () => {
