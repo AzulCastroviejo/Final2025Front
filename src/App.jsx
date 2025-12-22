@@ -10,6 +10,8 @@ import Cart from './pages/Cartviejo';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import CategoryPage from './pages/CategoryPage';
+import OrderDetails from './pages/OrderDetails'; // Import the new page
+
 
 // Protected Route Component
 /*function ProtectedRoute({ children }) {
@@ -27,7 +29,7 @@ function App() {
   
   return (
     <Routes>
-       {/* Ruta principal - Home con categorías y productos destacados */}
+      {/* Ruta principal - Home con categorías y productos destacados */}
       <Route path="/" element={<Home />} />
       
       {/* Todos los productos */}
