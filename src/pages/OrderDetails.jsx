@@ -10,14 +10,19 @@ const OrderDetails = () => {
     useEffect(() => {
         const fetchOrderDetails = async () => {
             try {
-                const response = await fetch(`/api/orders/${orderId}`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                // Usar la instancia 'api' para llamar al backend
+                const response = await api.get(`/orders/${orderId}`);
+                
+                // Con axios (api), los datos están en response.data
+                setOrder(response.data);
+
+            } catch (err) {
+                console.error("Error fetching order details:", err);
+                if (err.response && err.response.status === 404) {
+                    setError('El pedido no fue encontrado.');
+                } else {
+                    setError('Ocurrió un error al cargar el pedido.');
                 }
-                const data = await response.json();
-                setOrder(data);
-            } catch (error) {
-                setError(error.message);
             } finally {
                 setLoading(false);
             }
@@ -67,7 +72,8 @@ const OrderDetails = () => {
                 </tbody>
             </table>
 
-            <Link to="/" style={{ marginTop: '20px', display: 'inline-block' }}>Back to Home</Link>
+            <Link to="/products" style={{ marginTop: '20px', display: 'inline-block' }}>Seguir Comprando</Link>
+       
         </div>
     );
 };

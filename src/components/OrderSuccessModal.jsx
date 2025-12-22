@@ -94,6 +94,7 @@ const OrderSuccessModal = ({ isOpen, onClose, orderNumber, orderTotal }) => {
               >
                 Ver Detalles del Pedido
               </button>
+              
             </div>
 
             {/* Mensaje adicional */}
