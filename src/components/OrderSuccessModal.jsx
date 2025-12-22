@@ -1,6 +1,7 @@
 // src/components/OrderSuccessModal.jsx - TEMA OSCURO
 import React from 'react';
 import { CheckCircle, ShoppingBag, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const OrderSuccessModal = ({ isOpen, onClose, orderNumber, orderTotal }) => {
   if (!isOpen) return null;
@@ -12,7 +13,7 @@ const OrderSuccessModal = ({ isOpen, onClose, orderNumber, orderTotal }) => {
 
   const handleViewOrder = () => {
     onClose();
-    window.location.href = `/orders/${orderNumber.id_key}`;
+    navigate(`/orders/${orderNumber}`);
   };
 
   return (
