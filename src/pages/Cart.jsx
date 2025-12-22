@@ -131,6 +131,7 @@ export default function Cart() {
       // PASO 4: Crear la orden "padre"
       console.log('PASO 4: Creando la orden...');
       const orderPayload = {
+        date: new Date().toISOString(),
         client_id: clientId,
         bill_id: billId,
         delivery_method: orderData.delivery_method,
