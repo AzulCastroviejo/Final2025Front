@@ -145,7 +145,7 @@ export default function Dashboard() {
         </div>
 
         {/* --- FORMULARIO CREAR CATEGORÍA --- */}
-        <div className="bg-gray-800 p-6 rounded-lg">
+        <div className="bg-gray-800 p-6 rounded-lg mb-8">
           <h2 className="text-xl mb-4">Crear Nueva Categoría</h2>
           <form onSubmit={handleCreateCategory} className="flex items-center gap-4">
             <input type="text" placeholder="Nombre" value={newCategory.name} onChange={e => setNewCategory({ ...newCategory, name: e.target.value })} className="p-2 rounded bg-gray-700 flex-grow" />
