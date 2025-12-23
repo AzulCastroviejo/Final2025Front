@@ -3,6 +3,8 @@ import Navigation from '../components/Navigation';
 import api from '../api';
 
 const DISPLAY_LIMIT = 10; // Límite de items a mostrar por defecto
+const ORDER_STATUSES = ['PENDING', 'IN_PROGRESS', 'DELIVERED', 'CANCELLED']; // Estados de la orden
+
 
 export default function Dashboard() {
   const cart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -141,7 +143,7 @@ export default function Dashboard() {
             </div>
           </form>
         </div>
-        
+
         {/* --- FORMULARIO CREAR CATEGORÍA --- */}
         <div className="bg-gray-800 p-6 rounded-lg">
           <h2 className="text-xl mb-4">Crear Nueva Categoría</h2>
