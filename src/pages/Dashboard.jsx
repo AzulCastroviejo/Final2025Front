@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Navigation from '../components/Navigation';
 import api from '../api';
 
+const DISPLAY_LIMIT = 20; // Límite de items a mostrar por defecto
+
 export default function Dashboard() {
   const cart = JSON.parse(localStorage.getItem('cart') || '[]');
   const cartCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
@@ -11,24 +13,20 @@ export default function Dashboard() {
   const [categories, setCategories] = useState([]);
   const [orders, setOrders] = useState([]);
   const [bills, setBills] = useState([]);
-
+  
   const [newCategory, setNewCategory] = useState({ name: '', description: '' });
 
-  // Estado para el formulario de producto (crear y editar)
+  // Estado para el formulario de producto
   const [productForm, setProductForm] = useState({
-    name: '',
-    price: '',
-    stock: '',
-    description: '',
-    image: '',
-    category_id: ''
+    name: '', price: '', stock: '', description: '', image: '', category_id: ''
   });
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
 
-  // Estado para expandir detalles de la orden
+  // Estado para expandir detalles y listas
   const [expandedOrderId, setExpandedOrderId] = useState(null);
-
+  const [showAllOrders, setShowAllOrders] = useState(false);
+  const [showAllBills, setShowAllBills] = useState(false);
 
   // --- EFECTOS (CARGA DE DATOS) ---
   useEffect(() => {
@@ -36,16 +34,13 @@ export default function Dashboard() {
   }, []);
 
   const fetchData = () => {
-    // Se asume que los endpoints pueden devolver datos detallados
-    // para clientes y detalles de orden/factura.
     api.get('/products').then(res => setProducts(res.data));
     api.get('/categories').then(res => setCategories(res.data));
-    api.get('/orders').then(res => setOrders(res.data)); // Idealmente: /orders?include=client,details
-    api.get('/bills').then(res => setBills(res.data));   // Idealmente: /bills?include=client
+    api.get('/orders').then(res => setOrders(res.data));
+    api.get('/bills').then(res => setBills(res.data));
   };
 
   // --- MANEJADORES DE EVENTOS (PRODUCTOS) ---
-
   const handleProductFormChange = (e) => {
     const { name, value } = e.target;
     setProductForm(prev => ({ ...prev, [name]: value }));
@@ -62,16 +57,14 @@ export default function Dashboard() {
 
     try {
       if (isEditing) {
-        // Actualizar producto
         await api.put(`/products/${editingId}`, payload);
         alert('Producto actualizado con éxito');
       } else {
-        // Crear producto
         await api.post('/products', payload);
         alert('Producto creado con éxito');
       }
       resetProductForm();
-      fetchData(); // Recargar todos los datos
+      fetchData();
     } catch (err) {
       console.error(err);
       alert(`Error al ${isEditing ? 'actualizar' : 'crear'} el producto`);
@@ -89,7 +82,7 @@ export default function Dashboard() {
       image: product.image || '',
       category_id: product.category_id
     });
-    window.scrollTo(0, 0); // Scroll al principio de la página
+    window.scrollTo(0, 0);
   };
   
   const resetProductForm = () => {
@@ -101,7 +94,6 @@ export default function Dashboard() {
   };
 
   // --- MANEJADORES DE EVENTOS (CATEGORÍAS) ---
-
   async function handleCreateCategory(e) {
     e.preventDefault();
     try {
@@ -122,7 +114,7 @@ export default function Dashboard() {
       <div className="min-h-screen bg-black pt-20 pb-12 px-4 sm:px-6 lg:px-8 text-white">
         <h1 className="text-3xl font-bold mb-8">Dashboard de Administración</h1>
 
-        {/* --- FORMULARIO DE PRODUCTOS (CREAR/EDITAR) --- */}
+        {/* --- FORMULARIO DE PRODUCTOS --- */}
         <div className="bg-gray-800 p-6 rounded-lg mb-8">
           <h2 className="text-2xl mb-4">{isEditing ? 'Editar Producto' : 'Crear Nuevo Producto'}</h2>
           <form onSubmit={handleProductSubmit} className="space-y-4">
@@ -179,20 +171,22 @@ export default function Dashboard() {
 
         {/* --- TABLA DE ÓRDENES --- */}
         <div className="bg-gray-800 p-6 rounded-lg mb-8 overflow-x-auto">
-          <h2 className="text-2xl mb-4">Órdenes Recientes</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl">Órdenes Recientes</h2>
+            {orders.length > DISPLAY_LIMIT && (
+              <button onClick={() => setShowAllOrders(!showAllOrders)} className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded text-sm font-bold">
+                {showAllOrders ? 'Mostrar menos' : `Ver todas (${orders.length})`}
+              </button>
+            )}
+          </div>
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-gray-700">
-                <th className="p-2">ID</th>
-                <th className="p-2">Cliente</th>
-                <th className="p-2">Email</th>
-                <th className="p-2">Total</th>
-                <th className="p-2">Estado</th>
-                <th className="p-2">Acción</th>
+                <th className="p-2">ID</th><th className="p-2">Cliente</th><th className="p-2">Email</th><th className="p-2">Total</th><th className="p-2">Estado</th><th className="p-2">Acción</th>
               </tr>
             </thead>
             <tbody>
-              {orders.map(order => (
+              {(showAllOrders ? orders : orders.slice(0, DISPLAY_LIMIT)).map(order => (
                 <React.Fragment key={order.id_key}>
                   <tr className="border-b border-gray-600">
                     <td className="p-2">{order.id_key}</td>
@@ -230,19 +224,22 @@ export default function Dashboard() {
 
         {/* --- TABLA DE FACTURAS --- */}
         <div className="bg-gray-800 p-6 rounded-lg mb-8 overflow-x-auto">
-          <h2 className="text-2xl mb-4">Facturas</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl">Facturas</h2>
+            {bills.length > DISPLAY_LIMIT && (
+              <button onClick={() => setShowAllBills(!showAllBills)} className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded text-sm font-bold">
+                {showAllBills ? 'Mostrar menos' : `Ver todas (${bills.length})`}
+              </button>
+            )}
+          </div>
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-gray-700">
-                <th className="p-2">ID</th>
-                <th className="p-2">Nº Factura</th>
-                <th className="p-2">Cliente</th>
-                <th className="p-2">Monto</th>
-                <th className="p-2">Fecha</th>
+                <th className="p-2">ID</th><th className="p-2">Nº Factura</th><th className="p-2">Cliente</th><th className="p-2">Monto</th><th className="p-2">Fecha</th>
               </tr>
             </thead>
             <tbody>
-              {bills.map(bill => (
+              {(showAllBills ? bills : bills.slice(0, DISPLAY_LIMIT)).map(bill => (
                 <tr key={bill.id_key} className="border-b border-gray-600">
                   <td className="p-2">{bill.id_key}</td>
                   <td className="p-2">{bill.bill_number}</td>
@@ -255,7 +252,7 @@ export default function Dashboard() {
           </table>
         </div>
 
-        {/* --- FORMULARIO CREAR CATEGORÍA (EXISTENTE) --- */}
+        {/* --- FORMULARIO CREAR CATEGORÍA --- */}
         <div className="bg-gray-800 p-6 rounded-lg">
           <h2 className="text-xl mb-4">Crear Nueva Categoría</h2>
           <form onSubmit={handleCreateCategory} className="flex items-center gap-4">
