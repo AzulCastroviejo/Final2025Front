@@ -16,34 +16,37 @@ export default function Login() {
     setError('');
 
     try {
-      // AJUSTA ESTA RUTA según tu API
-      const res = await api.get('/clients/login', {
-        params: {
-        email,
-        password
-        }
+      // CAMBIO 1: Crear el cuerpo como form-data
+      const formData = new URLSearchParams();
+      formData.append('username', email); // El backend espera 'username' para el email
+      formData.append('password', password);
+
+      // CAMBIO 2: Usar el método POST y el endpoint /auth/login
+      const res = await api.post('/auth/login', formData, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
       });
 
     if (!res.data) {
         throw new Error("Usuario o contraseña incorrectos");
     }
-      // Guarda el token y usuario
-     localStorage.setItem('user', JSON.stringify(res.data));
 
-      
+      localStorage.setItem('accessToken', res.data.access_token);
+
       // Redirige a productos
       navigate('/products');
     } catch (err) {
-      const message = err.response?.data?.detail || 
-                     err.response?.data?.message || 
-                     'Error al iniciar sesión';
+      const message = err.response?.data?.detail || 'Error al iniciar sesión. Verifica tu email y contraseña.';
       setError(message);
     } finally {
       setLoading(false);
+      
     }
   }
 
   return (
+    
     <div className="min-h-screen bg-black flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         {/* Logo */}
@@ -152,3 +155,4 @@ export default function Login() {
     </div>
   );
 }
+
