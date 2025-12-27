@@ -28,33 +28,39 @@ function App() {
 
   
   return (
-    <Routes>
-      {/* Ruta principal - Home con categorías y productos destacados */}
-      <Route path="/" element={<Home />} />
-      
-      {/* Todos los productos */}
-      <Route path="/products" element={<Products />} />
-      
-      {/* Vista de productos por categoría */}
-      <Route path="/categories/:categoryId" element={<CategoryPage />} />
-     
-      {/* Detalle de producto */}
-      <Route path="/products/:id" element={<ProductDetail />} />
-      
-      {/* Carrito de compras */}
-      <Route path="/cart" element={<Cart />} />
-      
-      {/* Redireccionar dashboard */}
-      <Route path="/dashboard" element={<Dashboard />} />
-      
-      {/* Página de detalles del pedido */}
-      <Route path="/orders/:orderId" element={<OrderDetails />} />
+   
+        <Routes>
+              {/* Ruta principal - Home con categorías y productos destacados */}
+              <Route path="/" element={<Home />} />
+              
+              {/* Todos los productos */}
+              <Route path="/products" element={<Products />} />
+              
+              {/* Vista de productos por categoría */}
+              <Route path="/categories/:categoryId" element={<CategoryPage />} />
+            
+              {/* Detalle de producto */}
+              <Route path="/products/:id" element={<ProductDetail />} />
+              
+              {/* Carrito de compras */}
+              <Route path="/cart" element={<Cart />} />
+              
+              {/* Redireccionar dashboard */}
+              <Route path="/dashboard" element={<Dashboard />} />
+              
+              {/* Página de detalles del pedido */}
+              <Route path="/orders/:orderId" element={<OrderDetails />} />
 
-      {/* Redireccionar cualquier ruta no encontrada al home */}
-      {<Route path="*" element={<Navigate to="/" replace />} />}
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
 
-      
-    </Routes>
+              {/* Redireccionar cualquier ruta no encontrada al home */}
+              {<Route path="*" element={<Navigate to="/" replace />} />}
+
+              
+        </Routes>
+
+    
   );
 }
 
