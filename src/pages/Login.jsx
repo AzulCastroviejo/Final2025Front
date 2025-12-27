@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, LogIn } from 'lucide-react';
+import { useAuth } from '../context/AuthContext'; // <-- 1. Importar el hook
 import api from '../api';
 
 export default function Login() {
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -44,7 +46,41 @@ export default function Login() {
       
     }
   }
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
 
+    try {
+      const formData = new URLSearchParams();
+      formData.append('username', email);
+      formData.append('password', password);
+
+      const res = await api.post('/auth/token', formData, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      
+      if (!res.data || !res.data.access_token) {
+          throw new Error("Respuesta inválida del servidor");
+      }
+      // --- INICIO DEL CAMBIO ---
+      // Usamos 'token' como llave para que coincida con tu api.js
+      localStorage.setItem('token', res.data.access_token);
+      // --- FIN DEL CAMBIO ---
+      const userResponse = await api.get('/clients/me'); 
+      login(userResponse.data); // <-- Esto actualiza el estado global de la app
+      
+      //navigate('/products');
+
+    } catch (err) {
+      const message = err.response?.data?.detail || 'Error al iniciar sesión. Verifica tu email y contraseña.';
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  }
   return (
     
     <div className="min-h-screen bg-black flex items-center justify-center px-4">
