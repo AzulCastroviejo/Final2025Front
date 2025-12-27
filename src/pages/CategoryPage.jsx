@@ -78,25 +78,26 @@ export default function CategoryPage() {
   }, [categoryId]);
 
   async function loadCategoryData() {
-  setLoading(true);
-  setError('');
+    setLoading(true);
+    setError('');
 
-  try {
-    const categoryRes = await api.get(`/categories/${categoryId}`);
+    try {
+      // Fetch category details and products in parallel for better performance
+      const [categoryRes, productsRes] = await Promise.all([
+        api.get(`/categories/${categoryId}`), // 1. Get category info
+        api.get(`/products/category/${categoryId}`) // 2. Get products using the new endpoint
+      ]);
 
-    setCategory(categoryRes.data);
+      setCategory(categoryRes.data);
+      setProducts(productsRes.data); // Set products from the dedicated endpoint
 
-    // 🔥 USAR DIRECTAMENTE LOS PRODUCTOS DE LA CATEGORÍA
-    setProducts(categoryRes.data.products || []);
-    console.log(categoryRes.data.products);
-
-  } catch (err) {
-    console.error(err);
-    setError('No se pudo cargar la categoría');
-  } finally {
-    setLoading(false);
+    } catch (err) {
+      console.error('Failed to load category page data:', err);
+      setError('No se pudo cargar la información de la categoría y sus productos.');
+    } finally {
+      setLoading(false);
+    }
   }
-}
 
   function handleAddToCart(product) {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
