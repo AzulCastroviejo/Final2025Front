@@ -51,8 +51,8 @@ function App() {
               {/* Página de detalles del pedido */}
               <Route path="/orders/:orderId" element={<OrderDetails />} />
 
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              {<Route path="/login" element={<Login />} />}
+              {<Route path="/register" element={<Register />} />}
 
               {/* Redireccionar cualquier ruta no encontrada al home */}
               {<Route path="*" element={<Navigate to="/" replace />} />}
