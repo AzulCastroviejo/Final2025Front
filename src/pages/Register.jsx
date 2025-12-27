@@ -45,7 +45,7 @@ export default function Register() {
         telephone: formData.telephone
       };
 
-      await api.post('/clients', clientData);
+      await api.post('/clients/', clientData);
       
       alert('Registrado con éxito. Por favor inicia sesión.');
       navigate('/');
@@ -221,10 +221,21 @@ export default function Register() {
             <p className="text-gray-400 text-sm">
               ¿Ya tienes una cuenta?{' '}
               <Link 
-                to="/" 
+                to="/login" 
                 className="text-indigo-400 hover:text-indigo-300 font-semibold transition-colors"
               >
                 Inicia Sesión
+              </Link>
+            </p>
+          </div>
+          <div className="mt-6 text-center">
+            <p className="text-gray-400 text-sm">
+            
+              <Link 
+                to="/" 
+                className="text-indigo-400 hover:text-indigo-300 font-semibold transition-colors"
+              >
+                Volver al Inicio
               </Link>
             </p>
           </div>
