@@ -42,7 +42,8 @@ export default function Register() {
         name: formData.name,
         lastname: formData.lastname,
         email: formData.email,
-        telephone: formData.telephone
+        telephone: formData.telephone,
+        password: formData.password
       };
 
       await api.post('/clients/', clientData);
