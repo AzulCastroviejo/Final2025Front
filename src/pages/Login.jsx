@@ -13,92 +13,63 @@ export default function Login() {
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+  e.preventDefault();
+  setLoading(true);
+  setError('');
 
-    try {
-      // CAMBIO 1: Crear el cuerpo como form-data
-      const formData = new URLSearchParams();
-      formData.append('username', email); // El backend espera 'username' para el email
-      formData.append('password', password);
+  try {
+    const formData = new URLSearchParams();
+    formData.append('username', email);
+    formData.append('password', password);
 
-      // CAMBIO 2: Usar el método POST y el endpoint /auth/login
-      const response = await fetch(
-        "https://final2025python-main.onrender.com/auth/token",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          },
-          body: formData.toString()
-        }
-      );
-     /* const res = await api.post('/auth/login', formData, {
+    const response = await fetch(
+      "https://final2025python-main.onrender.com/auth/token",
+      {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded"
         },
-      });*/
-
-     
-      if (!response.ok) {
-        throw new Error("Credenciales incorrectas");
+        body: formData.toString()
       }
+    );
 
-      const data = await response.json();
-      localStorage.setItem("token", data.access_token);
-            // Redirige a productos
-      navigate('/products');
-    } catch (err) {
-      const message = err.response?.data?.detail || 'Error al iniciar sesión. Verifica tu email y contraseña.';
-      setError(message);
-    } finally {
-      setLoading(false);
-      
+    if (!response.ok) {
+      throw new Error("Credenciales incorrectas");
     }
-  }
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
 
-    try {
-      const formData = new URLSearchParams();
-      formData.append('username', email);
-      formData.append('password', password);
+    const data = await response.json();
 
-    const token = localStorage.getItem("token");
+    // 🔑 GUARDAR TOKEN
+    localStorage.setItem("token", data.access_token);
 
-    const res = await fetch(
+    // 👤 OBTENER USUARIO
+    const userRes = await fetch(
       "https://final2025python-main.onrender.com/clients/me",
       {
         headers: {
-          "Authorization": `Bearer ${token}`
+          "Authorization": `Bearer ${data.access_token}`
         }
       }
     );
 
-    const user = await res.json();
-      
-      if (!res.data || !res.data.access_token) {
-          throw new Error("Respuesta inválida del servidor");
-      }
-      // --- INICIO DEL CAMBIO ---
-      // Usamos 'token' como llave para que coincida con tu api.js
-      localStorage.setItem('token', res.data.access_token);
-      // --- FIN DEL CAMBIO ---
-      const userResponse = await api.get('/clients/me'); 
-      login(userResponse.data); // <-- Esto actualiza el estado global de la app
-      
-      //navigate('/products');
-
-    } catch (err) {
-      const message = err.response?.data?.detail || 'Error al iniciar sesión. Verifica tu email y contraseña.';
-      setError(message);
-    } finally {
-      setLoading(false);
+    if (!userRes.ok) {
+      throw new Error("No se pudo obtener el usuario");
     }
+
+    const user = await userRes.json();
+
+    // 🌍 Actualizar contexto global
+    login(user);
+
+    navigate('/products');
+
+  } catch (err) {
+    setError('Error al iniciar sesión. Verifica tu email y contraseña.');
+  } finally {
+    setLoading(false);
   }
+}
+  
   return (
     
     <div className="min-h-screen bg-black flex items-center justify-center px-4">
