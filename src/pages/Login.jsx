@@ -24,19 +24,30 @@ export default function Login() {
       formData.append('password', password);
 
       // CAMBIO 2: Usar el método POST y el endpoint /auth/login
-      const res = await api.post('/auth/login', formData, {
+      const response = await fetch(
+        "https://final2025python-main.onrender.com/auth/token",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: formData.toString()
+        }
+      );
+     /* const res = await api.post('/auth/login', formData, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-      });
+      });*/
 
-    if (!res.data) {
-        throw new Error("Usuario o contraseña incorrectos");
-    }
+     
+      if (!response.ok) {
+        throw new Error("Credenciales incorrectas");
+      }
 
-      localStorage.setItem('accessToken', res.data.access_token);
-
-      // Redirige a productos
+      const data = await response.json();
+      localStorage.setItem("token", data.access_token);
+            // Redirige a productos
       navigate('/products');
     } catch (err) {
       const message = err.response?.data?.detail || 'Error al iniciar sesión. Verifica tu email y contraseña.';
@@ -56,11 +67,18 @@ export default function Login() {
       formData.append('username', email);
       formData.append('password', password);
 
-      const res = await api.post('/auth/token', formData, {
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(
+      "https://final2025python-main.onrender.com/clients/me",
+      {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      });
+          "Authorization": `Bearer ${token}`
+        }
+      }
+    );
+
+    const user = await res.json();
       
       if (!res.data || !res.data.access_token) {
           throw new Error("Respuesta inválida del servidor");
