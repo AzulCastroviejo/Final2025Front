@@ -202,6 +202,7 @@ export default function Dashboard() {
                 <React.Fragment key={order.id_key}>
                   <tr className="border-b border-gray-600">
                     <td className="p-2">{order.id_key}</td>
+                    <td className="p-2">{order.bill_number || 'N'} </td>
                     <td className="p-2">{order.client?.name || 'N/A'} {order.client?.lastname || ''}</td>
                     <td className="p-2">{order.client?.email || 'N/A'}</td>
                     <td className="p-2">${order.total?.toFixed(2)}</td>

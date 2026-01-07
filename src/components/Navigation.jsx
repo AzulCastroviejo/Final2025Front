@@ -90,7 +90,7 @@ export default function Navigation({ cartCount = 0 }) {
                 // --- SI NO ESTÁ LOGUEADO ---
                 <Link to="/login" className="p-2 text-gray-300 hover:text-white rounded-lg flex items-center gap-2">
                   <LogIn className="w-5 h-5" />
-                  <span>Login</span>
+                  
                 </Link>
               )}
             </div>
