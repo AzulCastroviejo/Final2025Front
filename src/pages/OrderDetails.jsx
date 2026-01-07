@@ -53,6 +53,13 @@ export default function OrderDetails() {
   ) || 0;
 
   const iva = subtotal * 0.16;
+  const formattedDate = order.date ? new Date(order.date).toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+    }) : 'Fecha no disponible';
+
+  const formatCurrency = (value) => `$${(value || 0).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   return (
     <>
@@ -94,7 +101,8 @@ export default function OrderDetails() {
                 {order.delivery_method}
               </p>
               <p className="text-gray-400 text-sm mt-1">
-                {new Date(order.date).toLocaleDateString('es-AR')}
+                subValue={formattedDate}
+                
               </p>
             </div>
 
