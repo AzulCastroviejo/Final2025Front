@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import CategoryPage from './pages/CategoryPage';
 import OrderDetails from './pages/OrderDetails'; // Import the new page
+import Profile from './pages/Profile'; // Importa la nueva página de perfil
 
 
 // Protected Route Component
@@ -47,7 +48,8 @@ function App() {
               
               {/* Redireccionar dashboard */}
               <Route path="/dashboard" element={<Dashboard />} />
-              
+              <Route path="/profile" element={<Profile />} />
+
               {/* Página de detalles del pedido */}
               <Route path="/orders/:orderId" element={<OrderDetails />} />
 
