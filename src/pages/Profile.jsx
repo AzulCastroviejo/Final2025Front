@@ -5,47 +5,66 @@ import Navigation from '../components/Navigation';
 
 export default function Profile() {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // Estado de carga
   const navigate = useNavigate();
 
   useEffect(() => {
     try {
-      const userData = JSON.parse(localStorage.getItem('user'));
-      if (userData) {
+      const userString = localStorage.getItem('user');
+      if (userString) {
+        const userData = JSON.parse(userString);
         setUser(userData);
       } else {
-        // Si no hay usuario, redirigir al login
+        // Si no hay datos de usuario, redirigir al login
         navigate('/login');
       }
     } catch (error) {
-      console.error('Error al cargar datos del usuario:', error);
+      console.error('Error al cargar o procesar datos del usuario:', error);
+      // Si hay cualquier error (ej. JSON mal formado), tratar como si no estuviera logueado
       navigate('/login');
+    } finally {
+        setLoading(false); // Finalizar la carga después de la comprobación
     }
   }, [navigate]);
 
   const handleLogout = () => {
-    // Limpiar localStorage
     localStorage.removeItem('user');
     localStorage.removeItem('token');
-    
-    // Redirigir a la página de inicio y recargar
     navigate('/');
     window.location.reload();
   };
-
-  if (!user) {
+  
+  // Muestra un mensaje de carga mientras se verifican los datos del usuario
+  if (loading) {
     return (
         <div className="min-h-screen bg-black flex items-center justify-center text-white">
-            Cargando perfil...
+            Cargando...
         </div>
     );
   }
+  
+  // Si después de cargar no hay usuario, no renderizar nada más (ya se ha redirigido)
+  if (!user) {
+      return null;
+  }
 
-  // Asumiendo que el nombre puede venir en 'name' o 'user.name'
-  const displayName = user.name || user.user?.name || 'Usuario';
-  const displayEmail = user.email || user.user?.email;
+  // Acceder a las propiedades del usuario de forma segura
+  const displayName = user?.name || user?.user?.name || 'Usuario Desconocido';
+  const displayEmail = user?.email || user?.user?.email;
+
+  // Si, por alguna razón, el email sigue sin estar disponible, muestra un error
+  if (!displayEmail) {
+      console.error("Objeto de usuario encontrado pero falta el email:", user);
+      return (
+          <div className="min-h-screen bg-black flex items-center justify-center text-white">
+              Error: No se pudo encontrar el correo electrónico en los datos del perfil.
+          </div>
+      )
+  }
 
   return (
     <>
+      {/* El error podría estar en Navigation si intenta acceder al usuario sin verificar */}
       <Navigation />
       <div className="min-h-screen bg-black text-white pt-24">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
