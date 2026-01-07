@@ -139,6 +139,7 @@ export default function Cart() {
       // PASO 3: Crear la orden
       // El backend asociará la orden con el usuario a través del token.
       const orderPayload = {
+        client_id: clientId,
         bill_id: billId,
         delivery_method: orderData.delivery_method,
         status: 'pending',
