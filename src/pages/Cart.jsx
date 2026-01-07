@@ -131,7 +131,7 @@ export default function Cart() {
         date: new Date().toISOString().split('T')[0],
         total: total,
         payment_type: paymentTypeMapping[orderData.payment_method],
-        client_id_key: clientId,
+        client_id: clientId,
       };
       const billResponse = await api.post('/bills', billPayload);
       const billId = billResponse.data.id_key;
@@ -139,7 +139,7 @@ export default function Cart() {
       // PASO 3: Crear la orden
       // El backend asociará la orden con el usuario a través del token.
       const orderPayload = {
-        bill_id_key: billId,
+        bill_id: billId,
         delivery_method: orderData.delivery_method,
         status: 'PENDING',
         total: total,
@@ -150,8 +150,8 @@ export default function Cart() {
 
       // PASO 4: Añadir productos a la orden
       const orderDetailPromises = cart.map(item => api.post('/order_details', {
-        order_id_key: orderId,
-        product_id_key: item.id_key,
+        order_id: orderId,
+        product_id: item.id_key,
         quantity: item.quantity,
         price: item.price
       }));
