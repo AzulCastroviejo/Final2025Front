@@ -122,7 +122,7 @@ export default function Home() {
   );
 
   const user = JSON.parse(localStorage.getItem('user'));
-  const isAdmin = user && user.email === 'nosotros.somos.muta@gmail.com';
+  const isAdmin = user && user.user.email === 'nosotros.somos.muta@gmail.com';
 
 
   useEffect(() => {
