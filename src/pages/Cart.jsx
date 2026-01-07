@@ -127,6 +127,8 @@ export default function Cart() {
         cash: 'cash',
       };
       const billPayload = {
+        bill_number: `BILL-${Date.now()}`,
+        date: new Date().toISOString().split('T')[0],
         total: total,
         payment_type: paymentTypeMapping[orderData.payment_method],
         client_id_key: clientId,
