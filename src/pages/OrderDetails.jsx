@@ -101,7 +101,7 @@ export default function OrderDetails() {
                 {order.delivery_method}
               </p>
               <p className="text-gray-400 text-sm mt-1">
-                subValue={formattedDate}
+                {formattedDate}
                 
               </p>
             </div>
