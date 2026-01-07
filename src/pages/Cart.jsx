@@ -141,7 +141,7 @@ export default function Cart() {
       const orderPayload = {
         bill_id: billId,
         delivery_method: orderData.delivery_method,
-        status: 'PENDING',
+        status: 'pending',
         total: total,
         // Los campos `date` y `client_id_key` son gestionados por el backend.
       };
