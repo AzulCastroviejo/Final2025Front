@@ -57,6 +57,8 @@ export default function Login() {
     }
 
     const user = await userRes.json();
+    // 💾 GUARDAR USUARIO EN LOCALSTORAGE
+    localStorage.setItem("user", JSON.stringify(user));
 
     // 🌍 Actualizar contexto global
     login(user);
