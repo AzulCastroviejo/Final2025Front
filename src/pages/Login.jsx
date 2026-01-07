@@ -61,7 +61,7 @@ export default function Login() {
     // 🌍 Actualizar contexto global
     login(user);
 
-    navigate('/products');
+    navigate('/');
 
   } catch (err) {
     setError('Error al iniciar sesión. Verifica tu email y contraseña.');
@@ -169,13 +169,7 @@ export default function Login() {
             </p>
           </div>
         </div>
-
-        {/* Demo Access (para testing) */}
-        <div className="mt-6 p-4 bg-gray-900 rounded-lg border border-gray-800">
-          <p className="text-gray-400 text-xs text-center">
-            Demo: admin@test.com / password123
-          </p>
-        </div>
+        
       </div>
     </div>
   );
