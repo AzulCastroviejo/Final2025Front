@@ -7,6 +7,7 @@ export default function Profile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true); // Estado de carga
   const navigate = useNavigate();
+  const [orders, setOrders] = useState([]);
 
   useEffect(() => {
     try {
