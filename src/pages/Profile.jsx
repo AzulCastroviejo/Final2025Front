@@ -8,7 +8,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(true); // Estado de carga
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
-
+  
   useEffect(() => {
     try {
       const userString = localStorage.getItem('user');
@@ -49,6 +49,7 @@ export default function Profile() {
       return null;
   }
 
+
   // Acceder a las propiedades del usuario de forma segura
   const displayName = user?.name || user?.user?.name || 'Usuario Desconocido';
   const displayEmail = user?.email || user?.user?.email;
@@ -61,7 +62,20 @@ export default function Profile() {
               Error: No se pudo encontrar el correo electrónico en los datos del perfil.
           </div>
       )
-  }
+  } 
+  useEffect(() => {
+    async function fetchOrders() {
+      try {
+        const res = await api.get('/orders/me');
+        setOrders(res.data);
+      } catch (err) {
+        console.error('Error cargando órdenes', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchOrders();
+  }, []);
 
   return (
     <>
