@@ -81,7 +81,7 @@ export default function Navigation({ cartCount = 0 }) {
                   </button>
                   {isUserMenuOpen && (
                     <div className="absolute top-full right-0 mt-2 w-48 bg-gray-900 border border-gray-700 rounded-lg shadow-xl py-1">
-                      <Link to="/clients/me" onClick={closeAllMenus} className="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800"><LayoutDashboard size={16}/>Mi Perfil</Link>
+                      <Link to="/profile" onClick={closeAllMenus} className="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800"><LayoutDashboard size={16}/>Mi Perfil</Link>
                       <button onClick={() => { logout(); closeAllMenus(); }} className="w-full text-left flex items-center gap-3 px-4 py-2 text-sm text-red-400 hover:bg-gray-800"><LogOut size={16}/>Cerrar Sesión</button>
                     </div>
                   )}
@@ -127,7 +127,7 @@ export default function Navigation({ cartCount = 0 }) {
                         <div className="text-sm font-medium text-gray-400">{user.email}</div>
                       </div>
                     </div>
-                    <Link to="/clients/me" onClick={closeAllMenus} className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800">Mi Perfil</Link>
+                    <Link to="/profile" onClick={closeAllMenus} className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800">Mi Perfil</Link>
                     <button onClick={() => { logout(); closeAllMenus(); }} className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-red-400 hover:bg-red-500/20">Cerrar Sesión</button>
                   </>
               ) : (
