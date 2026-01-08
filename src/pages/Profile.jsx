@@ -19,6 +19,7 @@ export default function Profile() {
         // Si no hay datos de usuario, redirigir al login
         navigate('/login');
       }
+      
     } catch (error) {
       console.error('Error al cargar o procesar datos del usuario:', error);
       // Si hay cualquier error (ej. JSON mal formado), tratar como si no estuviera logueado
@@ -26,7 +27,19 @@ export default function Profile() {
     } finally {
         setLoading(false); // Finalizar la carga después de la comprobación
     }
-  }, [navigate]);
+    async function fetchOrders() {
+      try {
+        const res = await api.get('/orders/me');
+        setOrders(res.data);
+      } catch (err) {
+        console.error('Error cargando órdenes', err);
+      } finally {
+        setLoadingOrders(false);
+      }
+    }
+
+    fetchOrders();
+  }, [user, navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -63,19 +76,7 @@ export default function Profile() {
           </div>
       )
   } 
-  useEffect(() => {
-    async function fetchOrders() {
-      try {
-        const res = await api.get('/orders/me');
-        setOrders(res.data);
-      } catch (err) {
-        console.error('Error cargando órdenes', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchOrders();
-  }, []);
+
 
   return (
     <>
