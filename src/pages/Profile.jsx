@@ -94,6 +94,51 @@ export default function Profile() {
                   <p className="text-lg font-semibold">{displayEmail}</p>
                 </div>
               </div>
+             <h2 className="text-2xl font-semibold text-white mb-4">Mis Órdenes</h2>
+
+                    {loading ? (
+                        <p className="text-gray-400">Cargando órdenes...</p>
+                    ) : orders.length === 0 ? (
+                        <p className="text-gray-400">No tenés órdenes aún.</p>
+                    ) : (
+                        <div className="space-y-4">
+                        {orders.map(order => (
+                            <div
+                            key={order.id_key}
+                            onClick={() => navigate(`/orders/${order.id_key}`)}
+                            className="cursor-pointer bg-gray-900 border border-gray-700 rounded-xl p-5 hover:bg-gray-800 transition"
+                            >
+                            <div className="flex justify-between items-center">
+                                <div>
+                                <p className="text-white font-semibold">
+                                    Orden #{order.id_key}
+                                </p>
+                                <p className="text-sm text-gray-400">
+                                    {new Date(order.date).toLocaleDateString()}
+                                </p>
+                                </div>
+
+                                <div className="text-right">
+                                <p className="text-indigo-400 font-bold">
+                                    ${order.total}
+                                </p>
+                                <p className="text-sm text-gray-400 capitalize">
+                                    {order.status}
+                                </p>
+                                </div>
+                            </div>
+                            </div>
+                        ))}
+                        </div>
+                    )}
+
+
+
+
+
+
+
+
             </div>
 
             <div className="mt-10 text-center">
