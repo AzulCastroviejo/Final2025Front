@@ -76,11 +76,7 @@ const OrderSuccessModal = ({ isOpen, onClose, orderNumber, orderTotal }) => {
                 </div>
               </div>
 
-              <div className="mt-4 p-3 bg-indigo-500/10 rounded-lg border border-indigo-500/30">
-                <p className="text-sm text-indigo-300">
-                  📧 Recibirás un email de confirmación con los detalles de tu pedido
-                </p>
-              </div>
+              
             </div>
 
             {/* Botones de acción */}
