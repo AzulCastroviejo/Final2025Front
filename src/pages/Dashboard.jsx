@@ -113,7 +113,11 @@ export default function Dashboard() {
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       await api.put(`/orders/${orderId}`, {
+        total: order.total,
         status: newStatus,
+        delivery_method: order.delivery_method,
+        client_id: order.client_id,
+        bill_id: order.bill_id,
       });
 
       // Actualiza el estado local sin recargar todo
