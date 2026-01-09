@@ -108,8 +108,28 @@ export default function Dashboard() {
       alert('Error al crear categoría');
     }
   }
-  
-  // --- VISTA ---
+
+ 
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      await api.put(`/orders/${orderId}`, {
+        status: newStatus,
+      });
+
+      // Actualiza el estado local sin recargar todo
+      setOrders(prevOrders =>
+        prevOrders.map(order =>
+          order.id_key === orderId
+            ? { ...order, status: newStatus }
+            : order
+        )
+      );
+      } catch (error) {
+        console.error(error);
+        alert('No se pudo actualizar el estado de la orden');
+      }
+    };
+
   return (
     <>
       <Navigation cartCount={cartCount} />
