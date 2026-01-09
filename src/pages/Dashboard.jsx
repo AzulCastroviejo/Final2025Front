@@ -111,6 +111,9 @@ export default function Dashboard() {
 
  
   const handleStatusChange = async (orderId, newStatus) => {
+    const order = orders.find(o => o.id_key === orderId);
+    if (!order) return;
+    
     try {
       await api.put(`/orders/${orderId}`, {
         total: order.total,
