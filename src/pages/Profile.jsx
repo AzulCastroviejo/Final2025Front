@@ -10,38 +10,26 @@ export default function Profile() {
   const [loading, setLoading] = useState(true); // Estado de carga
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
+  const token = localStorage.getItem('token');
   
-  useEffect(() => {
+ useEffect(() => {
     try {
-      const userString = localStorage.getItem('user');
-      if (userString) {
+        const userString = localStorage.getItem('user');
+
+        if (userString) {
         const userData = JSON.parse(userString);
         setUser(userData);
-      } else {
-        // Si no hay datos de usuario, redirigir al login
+        } else {
         navigate('/login');
-      }
-      
+        }
     } catch (error) {
-      console.error('Error al cargar o procesar datos del usuario:', error);
-      // Si hay cualquier error (ej. JSON mal formado), tratar como si no estuviera logueado
-      navigate('/login');
+        console.error('Error al cargar usuario:', error);
+        navigate('/login');
     } finally {
-        setLoading(false); // Finalizar la carga después de la comprobación
+        setLoading(false);
     }
-    async function fetchOrders() {
-      try {
-        const res = await api.get('/orders/me');
-        setOrders(res.data);
-      } catch (err) {
-        console.error('Error cargando órdenes', err);
-      } finally {
-        setLoadingOrders(false);
-      }
-    }
+    }, [navigate]);
 
-    fetchOrders();
-  }, [user, navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -149,12 +137,6 @@ export default function Profile() {
                         ))}
                         </div>
                     )}
-
-
-
-
-
-
 
 
             </div>
