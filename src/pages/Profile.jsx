@@ -10,7 +10,13 @@ export default function Profile() {
   const [loading, setLoading] = useState(true); // Estado de carga
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
-  
+  const token = localStorage.getItem('token');
+  const res = await api.get('/orders/me', {
+    headers: {
+        Authorization: `Bearer ${token}`
+    }
+    });
+
   useEffect(() => {
     try {
       const userString = localStorage.getItem('user');
