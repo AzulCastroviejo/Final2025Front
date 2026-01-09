@@ -3,7 +3,7 @@ import Navigation from '../components/Navigation';
 import api from '../api';
 
 const DISPLAY_LIMIT = 10; // Límite de items a mostrar por defecto
-const ORDER_STATUSES = ['PENDING', 'IN_PROGRESS', 'DELIVERED', 'CANCELLED']; // Estados de la orden
+const ORDER_STATUSES = ['pending', 'in_progress', 'delivered', 'canceled']; // Estados de la orden
 
 
 export default function Dashboard() {
@@ -113,7 +113,7 @@ export default function Dashboard() {
   const handleStatusChange = async (orderId, newStatus) => {
     const order = orders.find(o => o.id_key === orderId);
     if (!order) return;
-    
+
     try {
       await api.put(`/orders/${orderId}`, {
         total: order.total,
