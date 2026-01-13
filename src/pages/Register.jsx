@@ -52,12 +52,12 @@ export default function Register() {
       alert('Registrado con éxito. Por favor inicia sesión.');
       navigate('/');
     } catch (err) {
-      const message = err.response?.data?.detail || 
-                     err.response?.data?.message || 
-                     'Error al registrar';
-      setError(err.response?.data?.detail || 'Error al registrar');
-
-      
+        if (err.response) {
+          setError(err.response.data.detail);
+        } else {
+          setError('Error de conexión con el servidor');
+        }
+          
     } finally {
       setLoading(false);
     }
