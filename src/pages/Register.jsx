@@ -55,7 +55,9 @@ export default function Register() {
       const message = err.response?.data?.detail || 
                      err.response?.data?.message || 
                      'Error al registrar';
-      setError(message);
+      setError(err.response?.data?.detail || 'Error al registrar');
+
+      
     } finally {
       setLoading(false);
     }
