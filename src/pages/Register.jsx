@@ -43,7 +43,8 @@ export default function Register() {
         lastname: formData.lastname,
         email: formData.email,
         telephone: formData.telephone,
-        password: formData.password
+        password: formData.password,
+        role: 'user'
       };
 
       await api.post('/clients/', clientData);
