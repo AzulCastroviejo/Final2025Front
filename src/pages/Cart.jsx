@@ -116,7 +116,7 @@ export default function Cart() {
 
       // PASO 1: Crear la dirección (si aplica)
       if (orderData.delivery_method === 'home_delivery') {
-        const addressPayload = { description: orderData.shipping_address, client_id_key: clientId };
+        const addressPayload = { description: orderData.shipping_address, client_id: clientId };
         await api.post('/addresses', addressPayload);
       }
 
