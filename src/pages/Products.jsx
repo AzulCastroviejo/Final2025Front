@@ -133,10 +133,23 @@ export default function Products() {
   }
 
   // Filtrar productos
-  const filteredProducts = products.filter(p => {
-    if (selectedCategory === null) return true;
-    return Number(p.category_id) === Number(selectedCategory);
+  
+  const filteredProducts = products.filter(product => {
+    // 1️⃣ Filtro por categoría
+    const matchCategory =
+      selectedCategory === null ||
+      Number(product.category_id) === Number(selectedCategory);
+
+    // 2️⃣ Filtro por texto (nombre + categoría)
+    const term = searchTerm.toLowerCase();
+
+    const matchSearch =
+      product.name.toLowerCase().includes(term) ||
+      categoryMap[product.category_id]?.toLowerCase().includes(term);
+
+    return matchCategory && matchSearch;
   });
+
 
 
   // Obtener cantidad de items en carrito para el nav
