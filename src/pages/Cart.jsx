@@ -189,6 +189,17 @@ export default function Cart() {
     setOrderData(prev => ({ ...prev, [name]: value }));
   }
 
+  const [cardData, setCardData] = useState({
+    cardNumber: '',
+    cardName: '',
+    expiry: '',
+    cvv: '',
+  });
+
+  function handleCardChange(e) {
+    const { name, value } = e.target;
+    setCardData(prev => ({ ...prev, [name]: value }));
+  }
   // --- RENDERIZADO ---
   return (
     <>
@@ -265,13 +276,81 @@ export default function Cart() {
                                     </div>
                                 )}
                                 <div>
-                                    <label className="block text-gray-300 mb-2">Método de Pago *</label>
-                                    <select name="payment_method" value={orderData.payment_method} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-indigo-500">
+                                  <label className="block text-gray-300 mb-2">Método de Pago *</label>
+                                  <select
+                                    name="payment_method"
+                                    value={orderData.payment_method}
+                                    onChange={handleInputChange}
+                                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                                  >
                                     <option value="card">Tarjeta de Crédito/Débito</option>
                                     <option value="transfer">Transferencia Bancaria</option>
                                     <option value="cash">Efectivo (Contra Entrega)</option>
-                                    </select>
+                                  </select>
                                 </div>
+
+                                {orderData.payment_method === 'card' && (
+                                  <div className="mt-6 space-y-4 animate-fade-in">
+                                    <h3 className="text-lg font-semibold text-white">
+                                      Datos de la Tarjeta
+                                    </h3>
+
+                                    <div>
+                                      <label className="block text-gray-300 mb-2">Número de Tarjeta *</label>
+                                      <input
+                                        type="text"
+                                        name="cardNumber"
+                                        value={cardData.cardNumber}
+                                        onChange={handleCardChange}
+                                        placeholder="1234 5678 9012 3456"
+                                        className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                                        required
+                                      />
+                                    </div>
+
+                                    <div>
+                                      <label className="block text-gray-300 mb-2">Nombre del Titular *</label>
+                                      <input
+                                        type="text"
+                                        name="cardName"
+                                        value={cardData.cardName}
+                                        onChange={handleCardChange}
+                                        placeholder="JUAN PÉREZ"
+                                        className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                                        required
+                                      />
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                      <div>
+                                        <label className="block text-gray-300 mb-2">Vencimiento *</label>
+                                        <input
+                                          type="text"
+                                          name="expiry"
+                                          value={cardData.expiry}
+                                          onChange={handleCardChange}
+                                          placeholder="MM/AA"
+                                          className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                                          required
+                                        />
+                                      </div>
+
+                                      <div>
+                                        <label className="block text-gray-300 mb-2">CVV *</label>
+                                        <input
+                                          type="password"
+                                          name="cvv"
+                                          value={cardData.cvv}
+                                          onChange={handleCardChange}
+                                          placeholder="123"
+                                          className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                                          required
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+
                             </div>
                             <div className="flex gap-4 mt-6">
                               <button type="button" onClick={() => setShowCheckout(false)} className="flex-1 px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all">Volver</button>
