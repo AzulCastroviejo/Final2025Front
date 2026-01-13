@@ -52,12 +52,20 @@ export default function Register() {
       alert('Registrado con éxito. Por favor inicia sesión.');
       navigate('/');
     } catch (err) {
-        if (err.response) {
-          setError(err.response.data.detail);
+      if (err.response?.data?.detail) {
+      const detail = err.response.data.detail;
+
+        if (typeof detail === 'string') {
+          setError(detail);
+        } else if (Array.isArray(detail)) {
+          // Errores de validación FastAPI
+          setError(detail.map(e => e.msg).join(' | '));
         } else {
-          setError('Error de conexión con el servidor');
+          setError('Error de validación');
         }
-          
+      } else {
+         setError('Error de conexión con el servidor');
+      }      
     } finally {
       setLoading(false);
     }
